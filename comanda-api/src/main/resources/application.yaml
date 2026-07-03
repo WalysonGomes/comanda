@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: comanda-api
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    time-zone: America/Fortaleza
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/comanda}
+    username: ${SPRING_DATASOURCE_USERNAME:comanda}
+    password: ${SPRING_DATASOURCE_PASSWORD:comanda}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: America/Fortaleza
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  domain: ${APP_DOMAIN:comanda.local}
+  jwt:
+    secret: ${APP_JWT_SECRET:comanda-dev-secret-change-me-comanda-dev-secret-change-me}

@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/*
+ * Tokens traduzidos de `.cmd-root` em `.design/Comanda Painel.dc.html` (fonte visual
+ * autoritativa). Modo claro apenas — sem dark mode no MVP.
+ */
+:root {
+  --acc: #d6492f;
+  --acc-d: #b53c25;
+  --acc-tint: #fbe6df;
+  --ink: #2a2320;
+  --ink2: #6f6557;
+  --ink3: #9a8f7e;
+  --line: #e8ddcc;
+  --cream: #f7f1e6;
+  --card: #fffdf9;
+
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --primary: var(--acc);
+  --primary-foreground: var(--card);
+  --secondary: var(--acc-tint);
+  --secondary-foreground: var(--acc-d);
+  --muted: var(--line);
+  --muted-foreground: var(--ink3);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--acc);
+  --radius: 0.875rem;
+}
+
+@theme inline {
+  --color-acc: var(--acc);
+  --color-acc-d: var(--acc-d);
+  --color-acc-tint: var(--acc-tint);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink2);
+  --color-ink-3: var(--ink3);
+  --color-line: var(--line);
+  --color-cream: var(--cream);
+  --color-card: var(--card);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+
+  /* Schibsted Grotesk: titulos/marca. Hanken Grotesk: interface (default). JetBrains Mono: dados. */
+  --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --animate-cmd-up: cmd-up 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-cmd-fade: cmd-fade 0.25s ease both;
+  --animate-cmd-pop: cmd-pop 0.22s cubic-bezier(0.22, 1.4, 0.4, 1) both;
+  --animate-cmd-check: cmd-check 0.4s cubic-bezier(0.22, 1.4, 0.4, 1) both;
+  --animate-cmd-pulse: cmd-pulse 2s ease-in-out infinite;
+  --animate-cmd-spin: cmd-spin 0.7s linear infinite;
+
+  @keyframes cmd-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes cmd-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes cmd-pop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes cmd-check {
+    from {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes cmd-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(214, 73, 47, 0);
+    }
+    50% {
+      box-shadow: 0 0 0 5px rgba(214, 73, 47, 0.14);
+    }
+  }
+  @keyframes cmd-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+body {
+  margin: 0;
+  color-scheme: light;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+}

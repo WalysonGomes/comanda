@@ -115,6 +115,23 @@
       transform: rotate(360deg);
     }
   }
+  @keyframes cmd-shim {
+    0% {
+      background-position: -220px 0;
+    }
+    100% {
+      background-position: 220px 0;
+    }
+  }
+}
+
+/* Skeleton shimmer (`.sk` in `.design/Comanda Painel.dc.html`) — colors are the design's literal
+ * shimmer gradient, not the semantic --line/--card tokens. */
+.sk {
+  background: linear-gradient(90deg, #efe7d8 25%, #f6efe3 37%, #efe7d8 63%);
+  background-size: 440px 100%;
+  animation: cmd-shim 1.3s infinite linear;
+  border-radius: 8px;
 }
 
 body {

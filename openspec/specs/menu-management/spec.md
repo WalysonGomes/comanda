@@ -1,5 +1,9 @@
-## ADDED Requirements
+# menu-management Specification
 
+## Purpose
+TBD - created by syncing change menu-management. Update Purpose after archive.
+
+## Requirements
 ### Requirement: Gestão de categorias pelo OWNER
 O sistema SHALL permitir ao usuário OWNER autenticado criar, editar, listar, reordenar e remover categorias de cardápio, sempre isoladas por `tenant_id`. Cada categoria SHALL ter nome, `position` (ordenação) e estado ativa/inativa (`is_active`). A listagem SHALL retornar as categorias do tenant ordenadas por `position` ascendente.
 

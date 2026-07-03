@@ -8,9 +8,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Baseline security (PRD 7.1): stateless, no CSRF, no default login page/basic auth. Real
- * authentication is added by {@code owner-auth}; until then {@link
- * com.comanda.platform.tenancy.TenantResolutionFilter} is the only gate on {@code /api/**}.
+ * Baseline security (PRD 7.1): stateless, no CSRF, no default login page/basic auth. Gating of
+ * {@code /api/painel/**} (owner-auth's JWT access tokens required) vs. the public routes
+ * ({@code /api/auth/**} signup/login/refresh, {@code /api/loja/**} storefront) is delegated to
+ * {@link com.comanda.platform.tenancy.TenantResolutionFilter}, which already resolves and
+ * rejects by JWT/subdomain before any handler runs — so authorization stays permissive here.
  */
 @Configuration
 @EnableWebSecurity

@@ -13,8 +13,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Populates {@link TenantContext} before any data access (D1, D2). Owner-panel API routes
  * ({@code /api/painel/**}) resolve by JWT; every other {@code /api/**} route resolves by
- * subdomain. Non-API routes (SPA, static assets) skip resolution entirely. A request whose
- * tenant can't be resolved never reaches a handler.
+ * subdomain, except the public auth routes ({@code /api/auth/**} — signup/login/refresh from
+ * {@code owner-auth}), which have no tenant yet and skip resolution entirely. Non-API routes
+ * (SPA, static assets) also skip resolution. A request whose tenant can't be resolved never
+ * reaches a handler.
  */
 @Component
 @Order(1)
@@ -22,6 +24,7 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
 
     private static final String API_PREFIX = "/api/";
     private static final String OWNER_PANEL_PREFIX = "/api/painel/";
+    private static final String AUTH_PREFIX = "/api/auth/";
 
     private final SubdomainTenantResolver subdomainTenantResolver;
     private final JwtTenantResolver jwtTenantResolver;
@@ -36,7 +39,7 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String path = request.getRequestURI();
 
-        if (!path.startsWith(API_PREFIX)) {
+        if (!path.startsWith(API_PREFIX) || path.startsWith(AUTH_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }

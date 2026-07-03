@@ -1,11 +1,15 @@
 import { createBrowserRouter } from 'react-router'
 
-import { StorefrontShell } from '@/features/storefront/StorefrontShell'
+import { LoginPage } from '@/features/auth/LoginPage'
+import { RequireAuth } from '@/features/auth/RequireAuth'
+import { SignupPage } from '@/features/auth/SignupPage'
 import { PainelShell } from '@/features/painel/PainelShell'
+import { StorefrontShell } from '@/features/storefront/StorefrontShell'
 
 /**
  * Storefront publico e painel do dono no mesmo bundle SPA, separados por rota (D5 / spec
- * `design-system`). Shells vazios nesta change; telas reais entram nas changes seguintes.
+ * `design-system`). `/painel/*` exige sessao (owner-auth); shell segue vazio, telas reais
+ * entram nas changes seguintes.
  */
 export const router = createBrowserRouter([
   {
@@ -13,7 +17,19 @@ export const router = createBrowserRouter([
     element: <StorefrontShell />,
   },
   {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/cadastro',
+    element: <SignupPage />,
+  },
+  {
     path: '/painel/*',
-    element: <PainelShell />,
+    element: (
+      <RequireAuth>
+        <PainelShell />
+      </RequireAuth>
+    ),
   },
 ])

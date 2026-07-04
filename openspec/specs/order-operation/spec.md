@@ -1,5 +1,9 @@
-## ADDED Requirements
+# order-operation Specification
 
+## Purpose
+TBD - created by syncing change order-operation. Update Purpose after archive.
+
+## Requirements
 ### Requirement: Criação idempotente de pedido
 O sistema SHALL expor um endpoint **público** (resolvido pelo subdomínio, sem autenticação) que cria um pedido para o tenant do subdomínio. A criação SHALL ser idempotente por `idempotency_key`: a constraint de unicidade é `(tenant_id, idempotency_key)` e o reenvio com a **mesma** key no **mesmo** tenant SHALL retornar o pedido já existente (mesmo `id`, mesmo total), sem criar um segundo pedido nem um segundo registro de histórico. O `tenant_id` SHALL vir sempre do subdomínio resolvido no servidor, nunca do corpo da requisição. O pedido é criado no status inicial `RECEBIDO`, o que grava o primeiro registro em `order_status_history` (`from_status` nulo, `to_status = RECEBIDO`, `changed_by = SYSTEM`), e SHALL incrementar `tenants.order_count_month`.
 

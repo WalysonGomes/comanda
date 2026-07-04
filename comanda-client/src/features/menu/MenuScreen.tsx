@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, ImageIcon, Pencil, Plus, UtensilsCrossed } from 'lucide-react'
 import { useNavigate } from 'react-router'
 
+import { PainelTabBar } from '@/components/PainelTabBar'
 import { CategoryFormSheet } from '@/features/menu/CategoryFormSheet'
 import { Skeleton } from '@/features/menu/components/Skeleton'
 import { formatCurrency } from '@/features/menu/format'
@@ -164,6 +165,8 @@ export function MenuScreen() {
           </button>
         )}
       </div>
+
+      <PainelTabBar current="cardapio" />
 
       {sheetCategory !== null && (
         <CategoryFormSheet

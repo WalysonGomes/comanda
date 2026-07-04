@@ -101,7 +101,7 @@ class OrderOperationFlowTest {
     private int raceCreate(String subdomain, String body, CountDownLatch ready, CountDownLatch go) throws Exception {
         ready.countDown();
         go.await();
-        MvcResult result = mockMvc.perform(withSubdomain(post("/api/loja/orders"), subdomain)
+        MvcResult result = mockMvc.perform(withSubdomain(post("/api/loja/pedidos"), subdomain)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andReturn();
@@ -285,7 +285,7 @@ class OrderOperationFlowTest {
     }
 
     private JsonNode createOrder(String subdomain, String body) throws Exception {
-        MvcResult result = mockMvc.perform(withSubdomain(post("/api/loja/orders"), subdomain)
+        MvcResult result = mockMvc.perform(withSubdomain(post("/api/loja/pedidos"), subdomain)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andReturn();
@@ -316,7 +316,7 @@ class OrderOperationFlowTest {
     private String orderJson(String idempotencyKey, Long productId, int quantity, List<Long> additionalItemIds) {
         return """
                 {"idempotencyKey":"%s","customerName":"Cliente Teste","customerPhone":"85988887777",
-                 "deliveryType":"RETIRADA","notes":"","items":[{"productId":%d,"quantity":%d,"additionalItemIds":%s}]}
+                 "deliveryType":"RETIRADA","notes":"","lines":[{"productId":%d,"quantity":%d,"additionalItemIds":%s}]}
                 """.formatted(idempotencyKey, productId, quantity, additionalItemIds);
     }
 

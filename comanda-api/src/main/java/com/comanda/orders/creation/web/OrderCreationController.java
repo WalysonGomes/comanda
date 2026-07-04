@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Public, subdomain-resolved (no JWT) — {@code /api/loja/**} per {@code
  * TenantResolutionFilter}/{@code SecurityConfig}'s existing convention for the storefront prefix.
+ * Path is {@code /pedidos}, not {@code /orders}: matches {@code public-storefront}'s already-built
+ * {@code storefrontApi.createOrder} call exactly (its own contract comment names this literal
+ * path).
  */
 @RestController
-@RequestMapping("/api/loja/orders")
+@RequestMapping("/api/loja/pedidos")
 public class OrderCreationController {
 
     private final OrderCreationService orderCreationService;

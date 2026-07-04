@@ -91,7 +91,7 @@ class OrderCreationTransaction {
                 isDelivery ? request.address().trim() : null, request.notes(), request.idempotencyKey());
         order = orderRepository.save(order);
 
-        for (OrderLineRequest line : request.items()) {
+        for (OrderLineRequest line : request.lines()) {
             Product product = productRepository.findById(line.productId()).orElseThrow(ProductNotFoundException::new);
             if (!isAvailableToday(product)) {
                 throw new ItemUnavailableException(product.getName());

@@ -6,11 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 
 /**
- * The tenancy root created by signup. Only the columns owner-auth writes/reads are mapped; the
- * rest of the {@code tenants} row (plan, delivery fee, hours, ...) belongs to later changes and
- * keeps its DB defaults.
+ * The tenancy root created by signup. Owner-auth only writes/reads the identity columns; {@code
+ * order-operation} adds the fields it needs for order totals and the header toggle ({@link
+ * #deliveryFee}, {@link #minOrderValue}, {@link #open}, {@link #orderCountMonth}) — all already
+ * present in the {@code tenants} row since {@code foundations}' V1 migration, just unmapped until
+ * a feature needed them.
  */
 @Entity
 @Table(name = "tenants")
@@ -28,6 +31,18 @@ public class Tenant {
 
     @Column(name = "whatsapp_number", length = 20)
     private String whatsappNumber;
+
+    @Column(name = "delivery_fee", nullable = false, precision = 10, scale = 2)
+    private BigDecimal deliveryFee = BigDecimal.ZERO;
+
+    @Column(name = "min_order_value", nullable = false, precision = 10, scale = 2)
+    private BigDecimal minOrderValue = BigDecimal.ZERO;
+
+    @Column(name = "is_open", nullable = false)
+    private boolean open = true;
+
+    @Column(name = "order_count_month", nullable = false)
+    private int orderCountMonth;
 
     protected Tenant() {
     }
@@ -52,5 +67,29 @@ public class Tenant {
 
     public String getWhatsappNumber() {
         return whatsappNumber;
+    }
+
+    public BigDecimal getDeliveryFee() {
+        return deliveryFee;
+    }
+
+    public BigDecimal getMinOrderValue() {
+        return minOrderValue;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public int getOrderCountMonth() {
+        return orderCountMonth;
+    }
+
+    public void incrementOrderCountMonth() {
+        this.orderCountMonth++;
     }
 }

@@ -31,19 +31,36 @@ public class JwtTenantResolver implements TenantResolver {
 
     @Override
     public Optional<Long> resolve(HttpServletRequest request) {
+        return parseClaims(request).map(claims -> {
+            Object tenantId = claims.get(TENANT_CLAIM);
+            return tenantId == null ? null : Long.valueOf(tenantId.toString());
+        });
+    }
+
+    /**
+     * Resolves the OWNER user id from the same access token's subject (D2 complement), used by
+     * {@code order-operation} to attribute status changes to a user in {@code
+     * order_status_history.changed_by_user_id} rather than {@code SYSTEM}.
+     */
+    public Optional<Long> resolveUserId(HttpServletRequest request) {
+        return parseClaims(request)
+                .map(Claims::getSubject)
+                .filter(subject -> subject != null && !subject.isBlank())
+                .map(Long::valueOf);
+    }
+
+    private Optional<Claims> parseClaims(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith(BEARER_PREFIX)) {
             return Optional.empty();
         }
         String token = header.substring(BEARER_PREFIX.length());
         try {
-            Claims claims = Jwts.parser()
+            return Optional.of(Jwts.parser()
                     .verifyWith(signingKey)
                     .build()
                     .parseSignedClaims(token)
-                    .getPayload();
-            Object tenantId = claims.get(TENANT_CLAIM);
-            return tenantId == null ? Optional.empty() : Optional.of(Long.valueOf(tenantId.toString()));
+                    .getPayload());
         } catch (JwtException | IllegalArgumentException e) {
             return Optional.empty();
         }

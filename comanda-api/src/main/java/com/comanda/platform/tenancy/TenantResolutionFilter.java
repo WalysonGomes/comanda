@@ -55,9 +55,13 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
             }
 
             TenantContext.set(tenantId.get());
+            if (isOwnerPanelRoute) {
+                jwtTenantResolver.resolveUserId(request).ifPresent(UserContext::set);
+            }
             filterChain.doFilter(request, response);
         } finally {
             TenantContext.clear();
+            UserContext.clear();
         }
     }
 }

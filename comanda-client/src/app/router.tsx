@@ -5,13 +5,15 @@ import { RequireAuth } from '@/features/auth/RequireAuth'
 import { SignupPage } from '@/features/auth/SignupPage'
 import { MenuScreen } from '@/features/menu/MenuScreen'
 import { ProductEditorScreen } from '@/features/menu/ProductEditorScreen'
+import { OrdersScreen } from '@/features/orders/OrdersScreen'
 import { PainelShell } from '@/features/painel/PainelShell'
 import { StorefrontShell } from '@/features/storefront/StorefrontShell'
 
 /**
  * Storefront publico e painel do dono no mesmo bundle SPA, separados por rota (D5 / spec
- * `design-system`). `/painel/*` exige sessao (owner-auth); `cardapio/**` (menu-management) e o
- * primeiro conteudo real do shell.
+ * `design-system`). `/painel/*` exige sessao (owner-auth); `pedidos` (order-operation) e a tela
+ * de operacao do dono, agora o destino padrao do shell (antes apontava para `cardapio` por nao
+ * existir ainda).
  */
 export const router = createBrowserRouter([
   {
@@ -34,7 +36,8 @@ export const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <Navigate to="cardapio" replace /> },
+      { index: true, element: <Navigate to="pedidos" replace /> },
+      { path: 'pedidos', element: <OrdersScreen /> },
       { path: 'cardapio', element: <MenuScreen /> },
       { path: 'cardapio/produtos/novo', element: <ProductEditorScreen /> },
       { path: 'cardapio/produtos/:productId', element: <ProductEditorScreen /> },

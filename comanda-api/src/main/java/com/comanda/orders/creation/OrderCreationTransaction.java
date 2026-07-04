@@ -20,9 +20,8 @@ import com.comanda.orders.domain.OrderItemAdditionalRepository;
 import com.comanda.orders.domain.OrderItemRepository;
 import com.comanda.orders.domain.OrderRepository;
 import com.comanda.orders.domain.OrderStatus;
+import com.comanda.storefront.BusinessClock;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -38,8 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 class OrderCreationTransaction {
 
-    private static final ZoneId TENANT_ZONE = ZoneId.of("America/Fortaleza");
-
     private final ProductRepository productRepository;
     private final AdditionalItemRepository additionalItemRepository;
     private final CustomerRepository customerRepository;
@@ -48,6 +45,7 @@ class OrderCreationTransaction {
     private final OrderItemAdditionalRepository orderItemAdditionalRepository;
     private final TenantRepository tenantRepository;
     private final OrderStatusService orderStatusService;
+    private final BusinessClock businessClock;
 
     OrderCreationTransaction(
             ProductRepository productRepository,
@@ -57,7 +55,8 @@ class OrderCreationTransaction {
             OrderItemRepository orderItemRepository,
             OrderItemAdditionalRepository orderItemAdditionalRepository,
             TenantRepository tenantRepository,
-            OrderStatusService orderStatusService) {
+            OrderStatusService orderStatusService,
+            BusinessClock businessClock) {
         this.productRepository = productRepository;
         this.additionalItemRepository = additionalItemRepository;
         this.customerRepository = customerRepository;
@@ -66,6 +65,7 @@ class OrderCreationTransaction {
         this.orderItemAdditionalRepository = orderItemAdditionalRepository;
         this.tenantRepository = tenantRepository;
         this.orderStatusService = orderStatusService;
+        this.businessClock = businessClock;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -141,7 +141,6 @@ class OrderCreationTransaction {
         if (availableDays == null || availableDays.length == 0) {
             return true;
         }
-        int today = LocalDate.now(TENANT_ZONE).getDayOfWeek().getValue() % 7;
-        return Arrays.asList(availableDays).contains(today);
+        return Arrays.asList(availableDays).contains(businessClock.dayOfWeek());
     }
 }

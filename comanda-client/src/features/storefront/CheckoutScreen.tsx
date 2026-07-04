@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AlertTriangle, ArrowLeft, Bike, ShoppingBag } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -30,6 +30,12 @@ export function CheckoutScreen({
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [unavailable, setUnavailable] = useState<{ lineId: string; name: string }[]>([])
+  // Stable for the lifetime of this checkout attempt (CheckoutScreen unmounts on back-to-cart or
+  // after a new order via SentScreen), so a double-tap before `submitting` re-renders — or any
+  // future retry — reuses the same key instead of creating a second order (PRD 4.1 / spec
+  // `public-storefront`: "reenvio com a mesma idempotency_key... não cria pedido duplicado").
+  const [idempotencyKey] = useState(() => crypto.randomUUID())
+  const submittingRef = useRef(false)
 
   const validateCart = useValidateCart()
 
@@ -56,8 +62,9 @@ export function CheckoutScreen({
 
   async function finalize() {
     setSubmitted(true)
-    if (!nameOk || !phoneOk || !addressOk || !business.open || lines.length === 0 || submitting) return
+    if (!nameOk || !phoneOk || !addressOk || !business.open || lines.length === 0 || submittingRef.current) return
 
+    submittingRef.current = true
     setSubmitting(true)
     try {
       const payload = {
@@ -85,7 +92,7 @@ export function CheckoutScreen({
       // always offer the copy fallback, regardless of whether persistence succeeds.
       try {
         await storefrontApi.createOrder({
-          idempotencyKey: crypto.randomUUID(),
+          idempotencyKey,
           customerName: name.trim(),
           customerPhone: phone.trim(),
           deliveryType,
@@ -100,6 +107,7 @@ export function CheckoutScreen({
       const whatsappUrl = business.whatsappNumber ? buildWhatsAppUrl(business.whatsappNumber, message) : null
       onSent(message, whatsappUrl)
     } finally {
+      submittingRef.current = false
       setSubmitting(false)
     }
   }

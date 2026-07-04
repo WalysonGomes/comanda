@@ -1,5 +1,9 @@
-## ADDED Requirements
+# public-storefront Specification
 
+## Purpose
+TBD - created by syncing change public-storefront. Update Purpose after archive.
+
+## Requirements
 ### Requirement: Resolução de tenant por subdomínio na vitrine pública
 O sistema SHALL resolver o tenant da vitrine pública a partir do subdomínio da requisição (`nomedonegocio.${APP_DOMAIN}`), sem exigir autenticação. Todas as leituras públicas SHALL ser filtradas pelo `tenant_id` resolvido do subdomínio, e NUNCA por identificador de tenant enviado pelo cliente. Um subdomínio que não corresponde a nenhum tenant SHALL resultar em recurso inexistente (404).
 

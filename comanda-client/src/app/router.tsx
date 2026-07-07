@@ -3,6 +3,8 @@ import { Navigate, createBrowserRouter } from 'react-router'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { SignupPage } from '@/features/auth/SignupPage'
+import { PrivacyPolicyPage } from '@/features/legal/PrivacyPolicyPage'
+import { TermsPage } from '@/features/legal/TermsPage'
 import { MenuScreen } from '@/features/menu/MenuScreen'
 import { ProductEditorScreen } from '@/features/menu/ProductEditorScreen'
 import { OrdersScreen } from '@/features/orders/OrdersScreen'
@@ -27,6 +29,14 @@ export const router = createBrowserRouter([
   {
     path: '/cadastro',
     element: <SignupPage />,
+  },
+  {
+    path: '/privacidade',
+    element: <PrivacyPolicyPage />,
+  },
+  {
+    path: '/termos',
+    element: <TermsPage />,
   },
   {
     path: '/painel',

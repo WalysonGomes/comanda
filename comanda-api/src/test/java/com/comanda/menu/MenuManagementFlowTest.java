@@ -136,6 +136,80 @@ class MenuManagementFlowTest {
                 .andExpect(jsonPath("$.code").value("ADDITIONAL_ITEM_NOT_FOUND"));
     }
 
+    @Test
+    void productAvailabilityAndDeleteOfAnotherTenantAreInaccessible() throws Exception {
+        String tokenA = signupAndGetToken("avail-tenant-a", "avail-a@example.com");
+        String tokenB = signupAndGetToken("avail-tenant-b", "avail-b@example.com");
+
+        Long categoryIdOfA = createCategory(tokenA, "Pratos").get("id").asLong();
+        Long productIdOfA = createProduct(tokenA, categoryIdOfA, "Feijoada", "22.00").get("id").asLong();
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch(
+                                "/api/painel/products/" + productIdOfA + "/availability")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"available\":false}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NOT_FOUND"));
+
+        mockMvc.perform(delete("/api/painel/products/" + productIdOfA)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NOT_FOUND"));
+    }
+
+    @Test
+    void additionalItemCreationAndDeletionOnAnotherTenantAreInaccessible() throws Exception {
+        String tokenA = signupAndGetToken("add2-tenant-a", "add2-a@example.com");
+        String tokenB = signupAndGetToken("add2-tenant-b", "add2-b@example.com");
+
+        Long categoryIdOfA = createCategory(tokenA, "Sorvetes").get("id").asLong();
+        Long productIdOfA = createProduct(tokenA, categoryIdOfA, "Sundae", "14.00").get("id").asLong();
+        Long groupIdOfA = createGroup(tokenA, productIdOfA, "Cobertura", "SINGLE", 1, 1).get("id").asLong();
+        Long itemIdOfA = createItem(tokenA, groupIdOfA, "Chocolate", "2.00").get("id").asLong();
+
+        mockMvc.perform(post("/api/painel/additional-groups/" + groupIdOfA + "/items")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Hackeado\",\"additionalPrice\":\"0.00\"}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ADDITIONAL_GROUP_NOT_FOUND"));
+
+        mockMvc.perform(delete("/api/painel/additional-groups/" + groupIdOfA)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ADDITIONAL_GROUP_NOT_FOUND"));
+
+        mockMvc.perform(delete("/api/painel/additional-items/" + itemIdOfA)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ADDITIONAL_ITEM_NOT_FOUND"));
+    }
+
+    @Test
+    void reorderWithAnotherTenantsIdsIsRejected() throws Exception {
+        String tokenA = signupAndGetToken("reorder-tenant-a", "reorder-a@example.com");
+        String tokenB = signupAndGetToken("reorder-tenant-b", "reorder-b@example.com");
+
+        Long categoryIdOfA = createCategory(tokenA, "Bebidas").get("id").asLong();
+        Long productIdOfA = createProduct(tokenA, categoryIdOfA, "Refrigerante", "7.00").get("id").asLong();
+        Long categoryIdOfB = createCategory(tokenB, "Lanches").get("id").asLong();
+
+        mockMvc.perform(post("/api/painel/categories/reorder")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"orderedIds\":[" + categoryIdOfA + "]}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("CATEGORY_NOT_FOUND"));
+
+        mockMvc.perform(post("/api/painel/products/reorder")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"categoryId\":" + categoryIdOfB + ",\"orderedIds\":[" + productIdOfA + "]}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NOT_FOUND"));
+    }
+
     // ---------- 6.2 validação ----------
 
     @Test

@@ -1,6 +1,11 @@
-## ADDED Requirements
+# operational-reliability Specification
 
+## Purpose
+TBD - created by syncing change reliability-and-security. Update Purpose after archive.
+
+## Requirements
 ### Requirement: Nenhum estado silencioso de falha na UI
+
 O sistema NÃO SHALL apresentar estado silencioso de falha em nenhuma superfície (storefront público e painel do dono). Toda operação que possa falhar (rede, validação, servidor) SHALL exibir mensagem clara ao usuário e oferecer um caminho de recuperação (repetir, corrigir, ou instrução explícita). Nenhuma requisição SHALL terminar em estado ambíguo, spinner infinito ou tela sem feedback.
 
 #### Scenario: Falha de requisição em qualquer tela exibe erro recuperável
@@ -15,6 +20,7 @@ O sistema NÃO SHALL apresentar estado silencioso de falha em nenhuma superfíci
 - **AND** nenhum ponto de falha permanece sem tratamento
 
 ### Requirement: Fallback de handoff do WhatsApp
+
 Quando o link `wa.me` não abrir no dispositivo do cliente, o sistema SHALL exibir a mensagem de pedido pré-formatada na própria tela, com um botão "Copiar mensagem", tratada como tela de primeira classe. O cliente NÃO SHALL ficar sem meio de enviar o pedido.
 
 #### Scenario: WhatsApp não abre no checkout
@@ -24,6 +30,7 @@ Quando o link `wa.me` não abrir no dispositivo do cliente, o sistema SHALL exib
 - **AND** confirma visualmente que a cópia foi realizada
 
 ### Requirement: Fallback de upload de foto
+
 Quando o upload da foto de um produto falhar, o sistema SHALL salvar o produto sem foto, sinalizar a falha de forma clara e oferecer a opção de tentar o upload novamente. A falha de upload NÃO SHALL impedir a persistência do produto.
 
 #### Scenario: Upload de foto falha ao salvar produto
@@ -33,6 +40,7 @@ Quando o upload da foto de um produto falhar, o sistema SHALL salvar o produto s
 - **AND** oferece a ação de tentar o upload novamente
 
 ### Requirement: Fallback de polling do painel
+
 Quando o polling automático da lista de pedidos falhar, o sistema SHALL exibir um indicador visual de conectividade com o timestamp da última atualização bem-sucedida. O painel NUNCA SHALL falhar silenciosamente ao atualizar.
 
 #### Scenario: Polling falha no painel de pedidos
@@ -42,6 +50,7 @@ Quando o polling automático da lista de pedidos falhar, o sistema SHALL exibir 
 - **AND** volta ao estado normal quando o polling é restabelecido
 
 ### Requirement: Idempotência de criação de pedido garantida
+
 O sistema SHALL garantir que a criação de pedido é idempotente por `idempotency_key` único por tenant, validada cross-tenant. Reenvio com a mesma chave no mesmo tenant retorna o mesmo pedido sem duplicar; a mesma chave em tenant diferente é rejeitada/isolada. Esta garantia SHALL ser coberta por teste de regressão nesta change.
 
 #### Scenario: Reenvio com a mesma idempotency_key não duplica
@@ -55,6 +64,7 @@ O sistema SHALL garantir que a criação de pedido é idempotente por `idempoten
 - **AND** trata a requisição isolada no tenant B (rejeita ou cria no escopo de B, nunca cross-tenant)
 
 ### Requirement: Idempotência de avanço de status garantida
+
 O sistema SHALL garantir que o avanço de status é idempotente: um request de avanço duplicado NÃO SHALL gerar dois registros em `order_status_history` nem pular etapa. Esta garantia SHALL ser coberta por teste de regressão nesta change.
 
 #### Scenario: Avanço de status duplicado não duplica histórico
@@ -63,6 +73,7 @@ O sistema SHALL garantir que o avanço de status é idempotente: um request de a
 - **AND** apenas um registro é gravado em `order_status_history`
 
 ### Requirement: Histórico append-only e rastreável
+
 O sistema SHALL manter `order_status_history` append-only: registros nunca são atualizados nem deletados. Cada registro SHALL conter `from_status`, `to_status`, `changed_by` (usuário OWNER ou SYSTEM/null) e `created_at`, garantindo rastreabilidade mínima de toda mudança de status.
 
 #### Scenario: Cada mudança de status grava registro completo
@@ -75,6 +86,7 @@ O sistema SHALL manter `order_status_history` append-only: registros nunca são 
 - **THEN** a operação não é permitida (append-only por convenção verificada em revisão/teste)
 
 ### Requirement: Plano de resposta a incidentes para dev solo
+
 O produto SHALL manter um plano documentado de resposta a incidentes adequado a um dev solo, definindo o responsável, o canal de emergência e o critério de notificação à ANPD em até 72h para vazamento de dados com risco real aos titulares.
 
 #### Scenario: Plano de incidentes existe e é acionável

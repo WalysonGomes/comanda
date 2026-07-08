@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/features/menu/format'
 import type { BusinessInfo, StorefrontCategory, StorefrontProduct } from '@/features/storefront/api'
 import { Skeleton } from '@/features/storefront/components/Skeleton'
+import { Footer } from '@/features/storefront/Footer'
 
 const PLACEHOLDER_BG = {
   backgroundImage: 'repeating-linear-gradient(45deg, #f1e8d6, #f1e8d6 8px, #ece2cd 8px, #ece2cd 16px)',
@@ -176,6 +177,7 @@ export function HomeScreen({
         ))}
       </div>
 
+      <Footer />
       <div className="h-24" />
     </div>
   )

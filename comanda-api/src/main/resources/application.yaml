@@ -25,6 +25,11 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
+server:
+  # Caddy sits in front (PRD 7.3): trust its X-Forwarded-* so request.getRemoteAddr() reflects the
+  # real client IP, not Caddy's — required for AuthRateLimitingFilter to key by client, not proxy.
+  forward-headers-strategy: framework
+
 app:
   domain: ${APP_DOMAIN:comanda.local}
   jwt:
@@ -33,3 +38,7 @@ app:
     refresh-ttl-days: ${APP_JWT_REFRESH_TTL_DAYS:14}
   storage:
     images-dir: ${APP_STORAGE_IMAGES_DIR:data/images}
+  rate-limit:
+    auth:
+      capacity: ${APP_RATE_LIMIT_AUTH_CAPACITY:10}
+      window-seconds: ${APP_RATE_LIMIT_AUTH_WINDOW_SECONDS:60}

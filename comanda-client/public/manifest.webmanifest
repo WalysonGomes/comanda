@@ -1,0 +1,16 @@
+{
+  "name": "Comanda",
+  "short_name": "Comanda",
+  "start_url": "/painel/",
+  "scope": "/painel/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#d6492f",
+  "background_color": "#f7f1e6",
+  "icons": [
+    { "src": "/icons/pwa-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

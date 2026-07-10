@@ -3,6 +3,7 @@ import { ArrowLeft, ImageIcon, Loader2 } from 'lucide-react'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
 
 import { cn } from '@/lib/utils'
+import { PlanLimitError } from '@/components/PlanLimitError'
 import { AdditionalGroupsEditor } from '@/features/menu/AdditionalGroupsEditor'
 import { DayChips } from '@/features/menu/components/DayChips'
 import { Skeleton } from '@/features/menu/components/Skeleton'
@@ -62,6 +63,7 @@ function ProductEditorForm({
   const [uploadState, setUploadState] = useState<'idle' | 'uploading' | 'error'>('idle')
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
+  const [formErrorCode, setFormErrorCode] = useState<string | null>(null)
   const [nameError, setNameError] = useState<string | null>(null)
   const [priceError, setPriceError] = useState<string | null>(null)
 
@@ -103,6 +105,7 @@ function ProductEditorForm({
 
   function handleSave() {
     setFormError(null)
+    setFormErrorCode(null)
     if (!validate()) return
     if (!categoryId) {
       setFormError('Categoria não especificada. Volte ao cardápio e use o botão "+" de uma categoria.')
@@ -127,7 +130,14 @@ function ProductEditorForm({
           navigate(`/painel/cardapio/produtos/${saved.id}`, { replace: true })
         }
       })
-      .catch((e) => setFormError(e instanceof MenuApiError ? e.message : 'Não foi possível salvar. Tente novamente.'))
+      .catch((e) => {
+        if (e instanceof MenuApiError) {
+          setFormError(e.message)
+          setFormErrorCode(e.code)
+        } else {
+          setFormError('Não foi possível salvar. Tente novamente.')
+        }
+      })
   }
 
   const saving = createProduct.isPending || updateProduct.isPending
@@ -233,7 +243,11 @@ function ProductEditorForm({
 
         <AdditionalGroupsEditor productId={product?.id} />
 
-        {formError && <p className="mt-4 text-[13px] font-semibold text-[#a05a4c]">{formError}</p>}
+        {formError && (
+          <div className="mt-4">
+            <PlanLimitError code={formErrorCode} message={formError} />
+          </div>
+        )}
 
         <button
           type="button"

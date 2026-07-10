@@ -3,7 +3,7 @@ import { AlertTriangle, ArrowLeft, Bike, ShoppingBag } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/features/menu/format'
-import { storefrontApi, type BusinessInfo, type DeliveryType } from '@/features/storefront/api'
+import { StorefrontApiError, storefrontApi, type BusinessInfo, type DeliveryType } from '@/features/storefront/api'
 import { lineTotal, useCartStore } from '@/features/storefront/cart'
 import { useValidateCart } from '@/features/storefront/queries'
 import { buildOrderMessage, buildWhatsAppUrl } from '@/features/storefront/whatsapp'
@@ -30,6 +30,10 @@ export function CheckoutScreen({
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [unavailable, setUnavailable] = useState<{ lineId: string; name: string }[]>([])
+  // Set only for PLAN_LIMIT_REACHED (task 9.2): this store hit its own monthly order cap, so the
+  // pedido genuinely wasn't taken — unlike other create-order failures, this one blocks the
+  // WhatsApp handoff instead of silently proceeding (see the comment on the createOrder call).
+  const [planLimitReached, setPlanLimitReached] = useState(false)
   // Stable for the lifetime of this checkout attempt (CheckoutScreen unmounts on back-to-cart or
   // after a new order via SentScreen), so a double-tap before `submitting` re-renders — or any
   // future retry — reuses the same key instead of creating a second order (PRD 4.1 / spec
@@ -62,7 +66,7 @@ export function CheckoutScreen({
 
   async function finalize() {
     setSubmitted(true)
-    if (!nameOk || !phoneOk || !addressOk || !business.open || lines.length === 0 || submittingRef.current) return
+    if (!nameOk || !phoneOk || !addressOk || !business.open || lines.length === 0 || submittingRef.current || planLimitReached) return
 
     submittingRef.current = true
     setSubmitting(true)
@@ -87,9 +91,11 @@ export function CheckoutScreen({
       const message = buildOrderMessage({ lines, deliveryType, address, deliveryFee: deliveryFeeValue })
 
       // The idempotent order-creation endpoint is a contract declared here and implemented by
-      // `order-operation` (proposal.md Decision 7) — it may not exist yet. The storefront's own
-      // requirement is unconditional: confirm "Pedido enviado" before the WhatsApp handoff and
-      // always offer the copy fallback, regardless of whether persistence succeeds.
+      // `order-operation` (proposal.md Decision 7). The storefront's own requirement is otherwise
+      // unconditional: confirm "Pedido enviado" before the WhatsApp handoff and always offer the
+      // copy fallback, regardless of whether persistence succeeds — except PLAN_LIMIT_REACHED
+      // (task 9.2), the one failure that means the pedido genuinely wasn't taken because the
+      // store hit its own plan cap; that one has to stop the customer here, not paper over it.
       try {
         await storefrontApi.createOrder({
           idempotencyKey,
@@ -100,8 +106,12 @@ export function CheckoutScreen({
           notes: lines.filter((line) => line.note).map((line) => `${line.name}: ${line.note}`).join(' | ') || null,
           lines: payload.lines,
         })
-      } catch {
-        // Ignored: see comment above.
+      } catch (err) {
+        if (err instanceof StorefrontApiError && err.code === 'PLAN_LIMIT_REACHED') {
+          setPlanLimitReached(true)
+          return
+        }
+        // Any other failure: ignored, see comment above.
       }
 
       const whatsappUrl = business.whatsappNumber ? buildWhatsAppUrl(business.whatsappNumber, message) : null
@@ -112,8 +122,16 @@ export function CheckoutScreen({
     }
   }
 
-  const finalizeBlocked = !business.open || unavailable.length > 0
-  const finalizeLabel = !business.open ? 'Loja fechada agora' : unavailable.length > 0 ? 'Remova o item indisponível' : submitting ? 'Enviando…' : 'Enviar pedido'
+  const finalizeBlocked = !business.open || unavailable.length > 0 || planLimitReached
+  const finalizeLabel = !business.open
+    ? 'Loja fechada agora'
+    : unavailable.length > 0
+      ? 'Remova o item indisponível'
+      : planLimitReached
+        ? 'Pedidos indisponíveis no momento'
+        : submitting
+          ? 'Enviando…'
+          : 'Enviar pedido'
 
   return (
     <div className="flex min-h-svh flex-col bg-cream">
@@ -130,6 +148,17 @@ export function CheckoutScreen({
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
+        {planLimitReached && (
+          <div className="mb-4 rounded-[14px] border border-[rgba(160,90,76,.3)] bg-[#f0e1dc] p-3.5">
+            <div className="flex items-center gap-2 text-[13.5px] font-bold text-[#8a4a3d]">
+              <AlertTriangle className="size-[18px]" />
+              Loja indisponível para novos pedidos
+            </div>
+            <p className="my-1.5 text-[12.5px] leading-snug text-[#9a5a4c]">
+              Esta loja atingiu o limite de pedidos deste mês. Entre em contato diretamente pelo WhatsApp da loja.
+            </p>
+          </div>
+        )}
         {unavailable.map((item) => (
           <div key={item.lineId} className="mb-4 rounded-[14px] border border-[rgba(160,90,76,.3)] bg-[#f0e1dc] p-3.5">
             <div className="flex items-center gap-2 text-[13.5px] font-bold text-[#8a4a3d]">

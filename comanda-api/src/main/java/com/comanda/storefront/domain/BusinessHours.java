@@ -10,10 +10,11 @@ import jakarta.persistence.Table;
 import java.time.LocalTime;
 
 /**
- * Read-only in this slice: {@code business_hours} rows are configured elsewhere (owner
- * onboarding/settings, a later change); the storefront only reads today's row to compute
- * open/closed (design.md Decision 3). Convention: {@code day_of_week} {@code 0=Dom…6=Sáb}
- * (PRD Seção 8), matching {@link com.comanda.storefront.BusinessClock}.
+ * Read here, written by {@code onboarding} (task 5.3/6.4): the storefront reads today's row to
+ * compute open/closed (design.md Decision 3); {@code OnboardingBusinessHoursService} is the write
+ * path this class's own comment used to call "a later change" — that change is this one.
+ * Convention: {@code day_of_week} {@code 0=Dom…6=Sáb} (PRD Seção 8), matching
+ * {@link com.comanda.storefront.BusinessClock}.
  */
 @Entity
 @Table(name = "business_hours")
@@ -38,6 +39,14 @@ public class BusinessHours extends TenantScopedEntity {
     protected BusinessHours() {
     }
 
+    public BusinessHours(Long tenantId, short dayOfWeek, LocalTime opensAt, LocalTime closesAt, boolean closed) {
+        super(tenantId);
+        this.dayOfWeek = dayOfWeek;
+        this.opensAt = opensAt;
+        this.closesAt = closesAt;
+        this.closed = closed;
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,5 +65,11 @@ public class BusinessHours extends TenantScopedEntity {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public void update(LocalTime opensAt, LocalTime closesAt, boolean closed) {
+        this.opensAt = opensAt;
+        this.closesAt = closesAt;
+        this.closed = closed;
     }
 }

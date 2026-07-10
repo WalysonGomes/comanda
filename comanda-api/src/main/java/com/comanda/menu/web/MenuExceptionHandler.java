@@ -6,6 +6,7 @@ import com.comanda.menu.CategoryNotEmptyException;
 import com.comanda.menu.CategoryNotFoundException;
 import com.comanda.menu.ProductNotFoundException;
 import com.comanda.menu.UnsupportedImageTypeException;
+import com.comanda.plans.PlanLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,6 +45,11 @@ public class MenuExceptionHandler {
     @ExceptionHandler(UnsupportedImageTypeException.class)
     public ResponseEntity<ApiErrorResponse> handleUnsupportedImageType() {
         return error(HttpStatus.BAD_REQUEST, "UNSUPPORTED_IMAGE_TYPE", "Formato de imagem não suportado. Use JPEG, PNG ou WebP.");
+    }
+
+    @ExceptionHandler(PlanLimitExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handlePlanLimitExceeded(PlanLimitExceededException e) {
+        return error(HttpStatus.PAYMENT_REQUIRED, e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

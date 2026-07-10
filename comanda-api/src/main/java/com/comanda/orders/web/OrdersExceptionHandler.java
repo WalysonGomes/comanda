@@ -6,6 +6,7 @@ import com.comanda.orders.InvalidCancellationReasonException;
 import com.comanda.orders.InvalidStatusTransitionException;
 import com.comanda.orders.ItemUnavailableException;
 import com.comanda.orders.OrderNotFoundException;
+import com.comanda.plans.PlanLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -49,6 +50,11 @@ public class OrdersExceptionHandler {
     @ExceptionHandler(InvalidCancellationReasonException.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidCancellationReason() {
         return error(HttpStatus.BAD_REQUEST, "INVALID_CANCELLATION_REASON", "Motivo do cancelamento deve ter ao menos 10 caracteres.");
+    }
+
+    @ExceptionHandler(PlanLimitExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handlePlanLimitExceeded(PlanLimitExceededException e) {
+        return error(HttpStatus.PAYMENT_REQUIRED, e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

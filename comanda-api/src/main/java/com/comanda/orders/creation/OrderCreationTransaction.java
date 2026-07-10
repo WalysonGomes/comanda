@@ -20,6 +20,7 @@ import com.comanda.orders.domain.OrderItemAdditionalRepository;
 import com.comanda.orders.domain.OrderItemRepository;
 import com.comanda.orders.domain.OrderRepository;
 import com.comanda.orders.domain.OrderStatus;
+import com.comanda.plans.PlanPeriod;
 import com.comanda.storefront.BusinessClock;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -127,7 +128,7 @@ class OrderCreationTransaction {
         order.setTotals(subtotal, deliveryFee, subtotal.add(deliveryFee));
         orderStatusService.transition(order, null, OrderStatus.RECEBIDO, null);
 
-        tenant.incrementOrderCountMonth();
+        tenant.incrementOrderCountMonth(PlanPeriod.current());
         tenantRepository.save(tenant);
 
         return orderRepository.saveAndFlush(order);

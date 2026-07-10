@@ -32,6 +32,7 @@ export function MenuScreen() {
 
   const [sheetCategory, setSheetCategory] = useState<Category | null | 'new'>(null)
   const [sheetError, setSheetError] = useState<string | null>(null)
+  const [sheetErrorCode, setSheetErrorCode] = useState<string | null>(null)
 
   const categories = categoriesQuery.data ?? []
   const products = productsQuery.data ?? []
@@ -57,13 +58,21 @@ export function MenuScreen() {
 
   function saveCategory(name: string, active: boolean) {
     setSheetError(null)
+    setSheetErrorCode(null)
     const isNew = sheetCategory === 'new'
     const mutation = isNew
       ? createCategory.mutateAsync({ name })
       : updateCategory.mutateAsync({ id: (sheetCategory as Category).id, body: { name, active } })
     mutation
       .then(() => setSheetCategory(null))
-      .catch((e) => setSheetError(e instanceof MenuApiError ? e.message : 'Não foi possível salvar. Tente novamente.'))
+      .catch((e) => {
+        if (e instanceof MenuApiError) {
+          setSheetError(e.message)
+          setSheetErrorCode(e.code)
+        } else {
+          setSheetError('Não foi possível salvar. Tente novamente.')
+        }
+      })
   }
 
   return (
@@ -173,10 +182,12 @@ export function MenuScreen() {
           category={sheetCategory === 'new' ? null : sheetCategory}
           saving={createCategory.isPending || updateCategory.isPending}
           errorMessage={sheetError}
+          errorCode={sheetErrorCode}
           onSave={saveCategory}
           onClose={() => {
             setSheetCategory(null)
             setSheetError(null)
+            setSheetErrorCode(null)
           }}
         />
       )}

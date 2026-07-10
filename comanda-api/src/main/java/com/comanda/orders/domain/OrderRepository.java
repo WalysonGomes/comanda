@@ -17,6 +17,10 @@ public interface OrderRepository extends TenantScopedRepository<Order, Long> {
 
     List<Order> findAllByStatusOrderByCreatedAtDesc(OrderStatus status);
 
+    List<Order> findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(OffsetDateTime from);
+
+    List<Order> findAllByStatusAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(OrderStatus status, OffsetDateTime from);
+
     long countByStatus(OrderStatus status);
 
     long countByCreatedAtGreaterThanEqual(OffsetDateTime from);

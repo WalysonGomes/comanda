@@ -6,6 +6,8 @@ import com.comanda.menu.categories.web.CategoryRequest;
 import com.comanda.menu.domain.Category;
 import com.comanda.menu.domain.CategoryRepository;
 import com.comanda.menu.domain.ProductRepository;
+import com.comanda.plans.PlanLimitExceededException;
+import com.comanda.plans.PlanPolicyService;
 import com.comanda.platform.tenancy.TenantContext;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,10 +25,13 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final PlanPolicyService planPolicyService;
 
-    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
+    public CategoryService(
+            CategoryRepository categoryRepository, ProductRepository productRepository, PlanPolicyService planPolicyService) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
+        this.planPolicyService = planPolicyService;
     }
 
     public List<CategoryResponse> list() {
@@ -35,6 +40,9 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse create(CategoryRequest request) {
+        if (!planPolicyService.canCreateCategory()) {
+            throw PlanLimitExceededException.categories();
+        }
         Long tenantId = TenantContext.get();
         int position = (int) categoryRepository.count();
         Category category = new Category(tenantId, request.name().trim(), position);

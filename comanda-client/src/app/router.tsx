@@ -7,8 +7,12 @@ import { PrivacyPolicyPage } from '@/features/legal/PrivacyPolicyPage'
 import { TermsPage } from '@/features/legal/TermsPage'
 import { MenuScreen } from '@/features/menu/MenuScreen'
 import { ProductEditorScreen } from '@/features/menu/ProductEditorScreen'
+import { OnboardingWizard } from '@/features/onboarding/OnboardingWizard'
 import { OrdersScreen } from '@/features/orders/OrdersScreen'
+import { AjustesScreen } from '@/features/painel/AjustesScreen'
 import { PainelShell } from '@/features/painel/PainelShell'
+import { MeuLinkScreen } from '@/features/plans/MeuLinkScreen'
+import { PlanoUsoScreen } from '@/features/plans/PlanoUsoScreen'
 import { StorefrontShell } from '@/features/storefront/StorefrontShell'
 
 /**
@@ -31,6 +35,10 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
+    path: '/onboarding',
+    element: <OnboardingWizard />,
+  },
+  {
     path: '/privacidade',
     element: <PrivacyPolicyPage />,
   },
@@ -51,6 +59,9 @@ export const router = createBrowserRouter([
       { path: 'cardapio', element: <MenuScreen /> },
       { path: 'cardapio/produtos/novo', element: <ProductEditorScreen /> },
       { path: 'cardapio/produtos/:productId', element: <ProductEditorScreen /> },
+      { path: 'ajustes', element: <AjustesScreen /> },
+      { path: 'ajustes/meu-link', element: <MeuLinkScreen /> },
+      { path: 'ajustes/plano', element: <PlanoUsoScreen /> },
     ],
   },
 ])

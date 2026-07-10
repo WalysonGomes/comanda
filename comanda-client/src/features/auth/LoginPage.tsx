@@ -103,7 +103,7 @@ export function LoginPage() {
 
       <div className="border-t border-line py-5 text-center">
         <span className="text-sm text-ink-2">Ainda não tem cardápio? </span>
-        <Link to="/cadastro" className="text-sm font-extrabold text-acc-d">
+        <Link to="/onboarding" className="text-sm font-extrabold text-acc-d">
           Criar meu cardápio
         </Link>
       </div>

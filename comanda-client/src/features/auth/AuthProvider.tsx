@@ -43,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAccessToken(response.accessToken)
     setUser(response.user)
     setStatus('authenticated')
+    return response
   }, [])
 
   const value = useMemo(

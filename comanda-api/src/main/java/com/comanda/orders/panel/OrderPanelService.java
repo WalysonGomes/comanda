@@ -10,6 +10,7 @@ import com.comanda.orders.domain.OrderItemAdditionalRepository;
 import com.comanda.orders.domain.OrderItemRepository;
 import com.comanda.orders.domain.OrderRepository;
 import com.comanda.orders.domain.OrderStatus;
+import com.comanda.plans.PlanRetentionService;
 import com.comanda.platform.tenancy.UserContext;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,22 +38,26 @@ public class OrderPanelService {
     private final OrderItemRepository orderItemRepository;
     private final OrderItemAdditionalRepository orderItemAdditionalRepository;
     private final OrderStatusService orderStatusService;
+    private final PlanRetentionService planRetentionService;
 
     public OrderPanelService(
             OrderRepository orderRepository,
             OrderItemRepository orderItemRepository,
             OrderItemAdditionalRepository orderItemAdditionalRepository,
-            OrderStatusService orderStatusService) {
+            OrderStatusService orderStatusService,
+            PlanRetentionService planRetentionService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.orderItemAdditionalRepository = orderItemAdditionalRepository;
         this.orderStatusService = orderStatusService;
+        this.planRetentionService = planRetentionService;
     }
 
     public OrdersBoardResponse board(OrderStatus statusFilter) {
+        OffsetDateTime retentionCutoff = planRetentionService.cutoff();
         List<Order> filtered = statusFilter == null
-                ? orderRepository.findAllByOrderByCreatedAtDesc()
-                : orderRepository.findAllByStatusOrderByCreatedAtDesc(statusFilter);
+                ? orderRepository.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(retentionCutoff)
+                : orderRepository.findAllByStatusAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(statusFilter, retentionCutoff);
 
         List<StatusCountResponse> filters = FILTERS.stream()
                 .map(status -> new StatusCountResponse(status.name(), orderRepository.countByStatus(status)))
@@ -68,7 +73,11 @@ public class OrderPanelService {
     }
 
     public OrderDetailResponse detail(Long orderId) {
-        return toDetail(orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new));
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getCreatedAt().isBefore(planRetentionService.cutoff())) {
+            throw new OrderNotFoundException();
+        }
+        return toDetail(order);
     }
 
     @Transactional

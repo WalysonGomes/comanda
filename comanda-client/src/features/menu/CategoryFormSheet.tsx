@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 
+import { PlanLimitError } from '@/components/PlanLimitError'
 import type { Category } from '@/features/menu/api'
 
 /** Create/rename category — a bottom sheet, matching the design's `cmd-up` overlay pattern. */
@@ -8,12 +9,14 @@ export function CategoryFormSheet({
   category,
   saving,
   errorMessage,
+  errorCode,
   onSave,
   onClose,
 }: {
   category: Category | null
   saving: boolean
   errorMessage: string | null
+  errorCode?: string | null
   onSave: (name: string, active: boolean) => void
   onClose: () => void
 }) {
@@ -68,7 +71,11 @@ export function CategoryFormSheet({
           </button>
         )}
 
-        {errorMessage && <p className="mt-3 text-[13px] font-semibold text-[#a05a4c]">{errorMessage}</p>}
+        {errorMessage && (
+          <div className="mt-3">
+            <PlanLimitError code={errorCode ?? null} message={errorMessage} />
+          </div>
+        )}
 
         <button
           type="button"

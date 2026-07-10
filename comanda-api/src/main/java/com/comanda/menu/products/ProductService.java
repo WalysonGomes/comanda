@@ -10,6 +10,8 @@ import com.comanda.menu.domain.Product;
 import com.comanda.menu.domain.ProductRepository;
 import com.comanda.menu.images.ImageStorage;
 import com.comanda.menu.products.web.ProductRequest;
+import com.comanda.plans.PlanLimitExceededException;
+import com.comanda.plans.PlanPolicyService;
 import com.comanda.platform.tenancy.TenantContext;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,18 +32,21 @@ public class ProductService {
     private final AdditionalGroupRepository additionalGroupRepository;
     private final AdditionalItemRepository additionalItemRepository;
     private final ImageStorage imageStorage;
+    private final PlanPolicyService planPolicyService;
 
     public ProductService(
             ProductRepository productRepository,
             CategoryRepository categoryRepository,
             AdditionalGroupRepository additionalGroupRepository,
             AdditionalItemRepository additionalItemRepository,
-            ImageStorage imageStorage) {
+            ImageStorage imageStorage,
+            PlanPolicyService planPolicyService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.additionalGroupRepository = additionalGroupRepository;
         this.additionalItemRepository = additionalItemRepository;
         this.imageStorage = imageStorage;
+        this.planPolicyService = planPolicyService;
     }
 
     public List<ProductResponse> list() {
@@ -50,6 +55,9 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(ProductRequest request) {
+        if (!planPolicyService.canCreateProduct()) {
+            throw PlanLimitExceededException.products();
+        }
         Category category = categoryRepository.findById(request.categoryId()).orElseThrow(CategoryNotFoundException::new);
         int position = (int) productRepository.countByCategoryId(category.getId());
         Product product = new Product(

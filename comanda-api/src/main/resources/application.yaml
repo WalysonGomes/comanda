@@ -42,3 +42,8 @@ app:
     auth:
       capacity: ${APP_RATE_LIMIT_AUTH_CAPACITY:10}
       window-seconds: ${APP_RATE_LIMIT_AUTH_WINDOW_SECONDS:60}
+  admin:
+    # Manual Essencial activation (PRD Seção 10, task 4.1). Empty by default: with no token
+    # configured, AdminAuthFilter rejects every /api/admin/** request outright — the operator
+    # surface is off unless explicitly enabled with a real secret in the deploy environment.
+    token: ${APP_ADMIN_TOKEN:}

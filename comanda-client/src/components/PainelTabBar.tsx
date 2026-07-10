@@ -1,16 +1,17 @@
-import { BookOpen, ClipboardList } from 'lucide-react'
+import { BookOpen, ClipboardList, Settings } from 'lucide-react'
 import { useNavigate } from 'react-router'
 
 /**
- * Bottom tab bar (`.design/Comanda Painel.dc.html` "bottom tab bar"). Only the tabs with a real
- * screen today are wired — Ajustes belongs to a later change and isn't linked here yet to avoid
- * a dead route.
+ * Bottom tab bar (`.design/Comanda Painel.dc.html` "bottom tab bar"). Ajustes (task 9) now has
+ * real screens behind it (Meu link, Plano e uso) — the dead-route caveat from `owner-pwa` no
+ * longer applies.
  */
-export function PainelTabBar({ current }: { current: 'pedidos' | 'cardapio' }) {
+export function PainelTabBar({ current }: { current: 'pedidos' | 'cardapio' | 'ajustes' }) {
   const navigate = useNavigate()
   const tabs = [
     { key: 'pedidos' as const, label: 'Pedidos', icon: ClipboardList, path: '/painel/pedidos' },
     { key: 'cardapio' as const, label: 'Cardápio', icon: BookOpen, path: '/painel/cardapio' },
+    { key: 'ajustes' as const, label: 'Ajustes', icon: Settings, path: '/painel/ajustes' },
   ]
 
   return (

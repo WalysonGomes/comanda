@@ -1,4 +1,9 @@
-## ADDED Requirements
+# owner-pwa Specification
+
+## Purpose
+TBD - created by archiving change pwa. Update Purpose after archive.
+
+## Requirements
 
 ### Requirement: Painel do dono instalável como PWA
 

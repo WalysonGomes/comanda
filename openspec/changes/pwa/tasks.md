@@ -42,9 +42,9 @@
 ## 7. Verificação (critérios de lançamento)
 
 - [x] 7.1 Validar manifest + instalabilidade no Android — verificado via build real + Chromium automatizado (Playwright): manifest válido servido com `application/manifest+json`, SW registrado e `active`, `start_url`/`scope` restritos a `/painel/`. Lighthouse completo/dispositivo Android real não disponível neste ambiente.
-- [ ] 7.2 Instalar no Android e confirmar abertura em modo `standalone` a partir do ícone — requer dispositivo/navegador Android real, não disponível neste ambiente de execução.
+- [x] 7.2 Instalar no Android e confirmar abertura em modo `standalone` a partir do ícone — confirmado pelo dono em dispositivo Android real.
 - [x] 7.3 Carregar o painel, ficar offline e confirmar que uma tela já visitada ainda renderiza; chamadas de API caem no indicador de conectividade (nunca falha silenciosa) — verificado automaticamente (Chromium headless: revisita a tela, offline, reload, root renderiza a partir do precache).
 - [x] 7.4 Confirmar que o storefront (`nomedonegocio.${APP_DOMAIN}`) NÃO registra SW e NÃO oferece instalação — verificado automaticamente (Chromium: zero registrations, nenhum `<link rel="manifest">` na storefront).
-- [ ] 7.5 Confirmar prompt de "nova versão" ao publicar novo build (sem reload silencioso) — fluxo implementado e coberto por D3/`onNeedRefresh` → `UpdateBanner`; ciclo completo de "publicar 2º build e observar o prompt" não executado neste ambiente.
-- [ ] 7.6 (Desejável) Confirmar "Adicionar à Tela de Início" em iOS Safari — requer dispositivo iOS real, não disponível neste ambiente.
+- [x] 7.5 Confirmar prompt de "nova versão" ao publicar novo build (sem reload silencioso) — confirmado pelo dono: novo build publicado, `UpdateBanner` exibido, atualização aplicada só no clique.
+- [x] 7.6 (Desejável) Confirmar "Adicionar à Tela de Início" em iOS Safari — confirmado pelo dono em dispositivo iOS real.
 - [x] 7.7 Documentar procedimento de rollback/kill-switch (SW vazio que limpa caches) no README/operacional — `docs/pwa-rollback.md`

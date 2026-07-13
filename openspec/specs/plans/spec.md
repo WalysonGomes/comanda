@@ -1,4 +1,9 @@
-## ADDED Requirements
+# plans Specification
+
+## Purpose
+TBD - created by archiving change plans-and-onboarding. Update Purpose after archive.
+
+## Requirements
 
 ### Requirement: Enforcement do limite de produtos do plano Gratuito
 O sistema SHALL impedir que um tenant no plano **Gratuito** possua mais de **30 produtos**. Ao tentar criar o 31º produto, o sistema SHALL responder **HTTP 402** com `code: PRODUCT_LIMIT_REACHED` e uma mensagem clara, sem persistir o produto. Tenants no plano **Essencial** NÃO SHALL sofrer esse limite (produtos ilimitados). A verificação SHALL considerar apenas os produtos do próprio tenant.

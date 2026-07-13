@@ -1,4 +1,9 @@
-## ADDED Requirements
+# onboarding Specification
+
+## Purpose
+TBD - created by archiving change plans-and-onboarding. Update Purpose after archive.
+
+## Requirements
 
 ### Requirement: Seleção de segmento com cardápio de demonstração
 O sistema SHALL, no primeiro passo do onboarding (bloco `ONBOARDING`, step 0), oferecer a seleção de um **segmento** de negócio (ex.: marmiteria, confeitaria, hamburgueria, açaizeria). Ao concluir o cadastro para o segmento escolhido, o sistema SHALL **pré-popular um cardápio de demonstração** correspondente — categorias, produtos (nome, descrição, preço) e grupos de adicionais típicos — como dados **reais e editáveis** do tenant (não placeholders), de modo que o dono edite algo pronto em vez de partir de uma tela vazia. O cardápio de demonstração SHALL respeitar os limites do plano Gratuito (não exceder 30 produtos nem 5 categorias).

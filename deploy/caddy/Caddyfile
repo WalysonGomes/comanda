@@ -1,0 +1,25 @@
+{
+	email admin@{$APP_DOMAIN}
+}
+
+# One block, one wildcard certificate: every tenant subdomain (nomedonegocio.${APP_DOMAIN}) and
+# the bare domain share it — no per-tenant certificate provisioning (deploy-vps spec, PRD 7.3).
+{$APP_DOMAIN}, *.{$APP_DOMAIN} {
+	# DNS-01 challenge: Caddy proves domain ownership via a DNS TXT record instead of an HTTP
+	# response, which is the only challenge type ACME allows for wildcard certs. Caddy issues and
+	# auto-renews the cert on its own; HTTP on port 80 is redirected to HTTPS automatically by
+	# Caddy's default behavior whenever a site block runs HTTPS — no explicit redirect directive
+	# needed (deploy-vps 5.3).
+	tls {
+		dns cloudflare {$CLOUDFLARE_API_TOKEN}
+	}
+
+	encode gzip
+
+	# header_up Host {host}: explicit here (Caddy already forwards the original Host by default)
+	# because tenant resolution in comanda-api depends on it — SubdomainTenantResolver reads
+	# nomedonegocio out of the Host header the reverse proxy passes through.
+	reverse_proxy app:8080 {
+		header_up Host {host}
+	}
+}

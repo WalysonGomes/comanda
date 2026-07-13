@@ -1,0 +1,8 @@
+# deploy-vps 7.2 — instalar com:
+#   sudo cp deploy/backup/comanda-backup.cron /etc/cron.d/comanda-backup
+#   sudo chmod 644 /etc/cron.d/comanda-backup
+# Ajuste o caminho abaixo para onde o repositório/artefato está implantado no VPS.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 3 * * * root COMPOSE_DIR=/opt/comanda /opt/comanda/deploy/backup/pg_dump_daily.sh >> /var/log/comanda-backup.log 2>&1

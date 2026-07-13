@@ -1,0 +1,21 @@
+# deploy-vps 2.2: activated via SPRING_PROFILES_ACTIVE=prod (docker-compose.yml, deploy runbook).
+# Every value below has no fallback — an unresolved placeholder makes Spring fail the boot with a
+# clear "Could not resolve placeholder" error instead of silently falling back to the insecure
+# defaults in application.yaml (PRD Seção 9, design.md "Configuração e segredos por ambiente").
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  mail:
+    host: ${SPRING_MAIL_HOST}
+    port: ${SPRING_MAIL_PORT}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+
+app:
+  domain: ${APP_DOMAIN}
+  jwt:
+    secret: ${APP_JWT_SECRET}
+  storage:
+    images-dir: ${APP_STORAGE_IMAGES_DIR}

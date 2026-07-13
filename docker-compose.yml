@@ -1,0 +1,54 @@
+# deploy-vps 8.1/8.2: app + Postgres 17 + Caddy on one host, same definition for local and
+# production (design.md "Docker Compose opcional"). Copy .env.example to .env and fill it in first.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - uploads:/var/comanda/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    expose:
+      - "8080"
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Sem `ports:` de propósito: o Postgres só é alcançável pela rede interna do compose
+    # (equivalente a "escutar apenas em loopback" — PRD 7.3, deploy-vps 3.1), nunca pela internet.
+    restart: unless-stopped
+
+  caddy:
+    build: ./deploy/caddy
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  uploads:
+  caddy_data:
+  caddy_config:

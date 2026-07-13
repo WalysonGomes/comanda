@@ -1,0 +1,10 @@
+.git
+.claude
+.design
+openspec
+docs
+**/target
+**/node_modules
+**/dist
+**/.vite
+*.md

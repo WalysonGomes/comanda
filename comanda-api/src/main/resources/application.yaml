@@ -24,6 +24,20 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  mail:
+    # deploy-vps 6.1: real host/credentials are required in prod (application-prod.yaml has no
+    # default and fails boot if unset). Dev default points nowhere reachable — TransactionalMailService
+    # only touches the connection on send(), never at bean creation, so local boot stays green.
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:1025}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
   # Caddy sits in front (PRD 7.3): trust its X-Forwarded-* so request.getRemoteAddr() reflects the

@@ -1,0 +1,12 @@
+# Modo temporário sem domínio/VPS definitivo: soma ao docker-compose.yml para trocar o Caddy
+# para on-demand TLS (sslip.io) em vez de wildcard DNS-01. Uso:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.sslip.yml up -d
+#
+# APP_DOMAIN no .env deve ser "<IP-do-VPS>.sslip.io" nesse modo (ex.: 34.10.20.30.sslip.io),
+# sem trocar nada além disso. Ver deploy/caddy/Caddyfile.sslip para o porquê.
+services:
+  caddy:
+    build:
+      args:
+        CADDYFILE: Caddyfile.sslip

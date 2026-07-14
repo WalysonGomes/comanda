@@ -1,0 +1,14 @@
+# Fallback pra VPS fraca (ex.: GCP e2-micro): usa imagens já compiladas no GHCR em vez de buildar
+# no host. Gerar as imagens com `deploy/build-and-push.sh` numa máquina forte, depois no VPS:
+#
+#   docker login ghcr.io -u <seu-usuario-github>
+#   docker compose -f docker-compose.yml -f docker-compose.prebuilt.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.prebuilt.yml up -d
+#
+# GHCR_USER abaixo tem que bater com o usado no build-and-push.sh (variável de ambiente do shell
+# que roda o compose, ou exporta antes: export GHCR_USER=walysongomes).
+services:
+  app:
+    image: ghcr.io/${GHCR_USER}/comanda-app:${TAG:-latest}
+  caddy:
+    image: ghcr.io/${GHCR_USER}/comanda-caddy:${TAG:-latest}

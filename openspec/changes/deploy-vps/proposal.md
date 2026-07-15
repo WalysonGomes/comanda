@@ -9,7 +9,7 @@ Todas as capabilities do MVP estão especificadas, mas não há forma definida d
 - **PostgreSQL 17 no próprio host**, sem serviço gerenciado, sem pausa por inatividade.
 - **Armazenamento de fotos em disco local** do VPS, com o domínio estruturado atrás de uma abstração de storage que permita migrar para bucket S3-compatível no futuro sem reescrever regras de negócio.
 - **Configuração 100% por variáveis de ambiente/segredos**: credenciais de banco, segredo JWT, chaves SMTP, domínio da aplicação — nada hardcoded no código nem versionado em texto claro.
-- **SMTP transacional (free tier)** configurado para os e-mails que o MVP usa (onboarding/recuperação de senha, conforme owner-auth).
+- **SMTP transacional (free tier)** com credenciais lidas do ambiente e falha tratada sem derrubar a aplicação. Só a plumbing: nenhuma feature do MVP (PRD Seção 3) dispara e-mail hoje — o painel usa login e-mail + senha, sem recuperação por e-mail. Validar envio ponta a ponta cabe à change que introduzir o primeiro fluxo de e-mail.
 - **Backup diário do Postgres** via cron no host, com cópia off-site.
 - **Docker Compose opcional** para reproduzir o ambiente (app + Postgres + Caddy) localmente e em produção.
 

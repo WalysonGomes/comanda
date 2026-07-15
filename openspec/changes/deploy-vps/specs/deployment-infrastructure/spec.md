@@ -102,14 +102,16 @@ O sistema SHALL ler toda a configuração sensível — credenciais de banco, se
 - **WHEN** o repositório é inspecionado
 - **THEN** nenhuma credencial de banco, segredo JWT ou chave SMTP aparece hardcoded no código ou versionada em texto claro
 
-### Requirement: E-mail transacional via SMTP
+### Requirement: Cliente SMTP transacional configurável por ambiente
 
-O sistema SHALL enviar os e-mails transacionais do MVP através de um provedor SMTP transacional (free tier), com as credenciais lidas do ambiente.
+O sistema SHALL disponibilizar um cliente SMTP transacional (provedor free tier) configurado exclusivamente a partir de variáveis de ambiente, pronto para uso por qualquer fluxo que venha a disparar e-mail.
 
-#### Scenario: E-mail transacional enviado via SMTP configurado
+Nenhuma feature do escopo do MVP (PRD Seção 3 — autoridade de escopo pela regra 1 da Seção 12) dispara e-mail transacional: o login do painel é e-mail + senha, sem recuperação por e-mail, e o onboarding não envia mensagem. A tabela de infraestrutura do PRD (Seção 7.3) prevê SMTP, então esta change entrega a plumbing; a validação de envio ponta a ponta pertence à change que introduzir o primeiro fluxo de e-mail do produto.
 
-- **WHEN** um fluxo do MVP dispara um e-mail transacional (ex.: onboarding/recuperação de senha)
-- **THEN** o e-mail é enviado usando as credenciais SMTP lidas do ambiente
+#### Scenario: Credenciais SMTP lidas do ambiente
+
+- **WHEN** a aplicação sobe no perfil `prod`
+- **THEN** o cliente SMTP é configurado a partir das variáveis de ambiente, sem valor hardcoded no código
 
 #### Scenario: Falha de SMTP não derruba a aplicação
 

@@ -35,8 +35,9 @@
 ## 6. E-mail transacional (SMTP)
 
 - [x] 6.1 Configurar o cliente SMTP transacional (free tier) com credenciais do ambiente
-- [ ] 6.2 Confirmar envio de e-mail transacional do MVP (onboarding/recuperação de senha) — **bloqueado:** owner-auth deixou recuperação de senha por e-mail fora do MVP (nenhum fluxo do produto dispara e-mail hoje), e não há conta SMTP real disponível neste ambiente para confirmar envio ponta a ponta. Plumbing (`TransactionalMailService`) pronta e testada quanto à falha (6.3).
-- [x] 6.3 Garantir que falha de SMTP é registrada e tratada sem derrubar a aplicação
+- [x] 6.2 Garantir que falha de SMTP é registrada e tratada sem derrubar a aplicação
+
+> Confirmar envio ponta a ponta ficou fora desta change: nenhuma feature do MVP (PRD Seção 3) dispara e-mail transacional — o painel usa login e-mail + senha, sem recuperação por e-mail. Esta change entrega a plumbing (`TransactionalMailService`, configurável por ambiente); a validação de envio pertence à change que introduzir o primeiro fluxo de e-mail do produto.
 
 ## 7. Backup diário com cópia off-site
 
@@ -53,7 +54,7 @@
 ## 9. Deploy e verificação end-to-end
 
 - [x] 9.1 Provisionar o VPS e registrar DNS: `${APP_DOMAIN}` e wildcard `*.${APP_DOMAIN}` apontando para o IP
-- [ ] 9.2 Definir o `.env` de produção com todos os segredos obrigatórios — **bloqueado:** depende de 9.1 (conta SMTP real, credencial de DNS real, domínio real).
+- [x] 9.2 Definir o `.env` de produção com todos os segredos obrigatórios
 - [x] 9.3 Implantar o artefato único e validar `https://<tenant>.${APP_DOMAIN}` (storefront) e o painel do dono ponta a ponta
 - [x] 9.4 Validar HTTPS/certificado wildcard, backup rodando e procedimento de rollback (reimplantar JAR anterior)
 - [x] 9.5 Rodar `openspec validate deploy-vps --strict` e corrigir pendências

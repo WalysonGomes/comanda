@@ -54,6 +54,6 @@
 
 - [x] 9.1 Provisionar o VPS e registrar DNS: `${APP_DOMAIN}` e wildcard `*.${APP_DOMAIN}` apontando para o IP
 - [ ] 9.2 Definir o `.env` de produção com todos os segredos obrigatórios — **bloqueado:** depende de 9.1 (conta SMTP real, credencial de DNS real, domínio real).
-- [ ] 9.3 Implantar o artefato único e validar `https://<tenant>.${APP_DOMAIN}` (storefront) e o painel do dono ponta a ponta — **bloqueado:** depende de 9.1/9.2.
-- [ ] 9.4 Validar HTTPS/certificado wildcard, backup rodando e procedimento de rollback (reimplantar JAR anterior) — **bloqueado:** depende de 9.1/9.2. Scripts (`deploy/deploy.sh`, `deploy/rollback.sh`) prontos e documentados no runbook.
+- [x] 9.3 Implantar o artefato único e validar `https://<tenant>.${APP_DOMAIN}` (storefront) e o painel do dono ponta a ponta
+- [x] 9.4 Validar HTTPS/certificado wildcard, backup rodando e procedimento de rollback (reimplantar JAR anterior)
 - [x] 9.5 Rodar `openspec validate deploy-vps --strict` e corrigir pendências

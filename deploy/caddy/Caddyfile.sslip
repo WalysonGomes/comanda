@@ -7,14 +7,12 @@
 #
 # Aviso de segurança: on_demand_tls sem `ask` é um oráculo de emissão de certificado aberto —
 # qualquer host que bater em *.<IP>.sslip.io faz o Caddy tentar emitir cert via Let's Encrypt.
-# Aceitável para teste curto/baixo tráfego num IP obscuro; NÃO leve isso para produção real.
+# Rate limiting de emissão agora é interno ao Caddy (versões novas removeram as opções manuais
+# `interval`/`burst` do on_demand_tls), mas ainda vale como aviso: aceitável só pra teste
+# curto/baixo tráfego num IP obscuro; NÃO leve isso para produção real.
 # Trocar para deploy/caddy/Caddyfile (DNS-01 + domínio próprio) antes de ter usuários reais.
 {
 	email admin@example.com
-	on_demand_tls {
-		interval 2m
-		burst    5
-	}
 }
 
 :443 {

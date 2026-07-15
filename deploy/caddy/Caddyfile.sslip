@@ -5,14 +5,29 @@
 # de DNS para um domínio que não é seu), então wildcard cert está fora. Em vez disso, on_demand_tls
 # emite um certificado individual por subdomínio (HTTP-01) na primeira requisição de cada tenant.
 #
-# Aviso de segurança: on_demand_tls sem `ask` é um oráculo de emissão de certificado aberto —
-# qualquer host que bater em *.<IP>.sslip.io faz o Caddy tentar emitir cert via Let's Encrypt.
-# Rate limiting de emissão agora é interno ao Caddy (versões novas removeram as opções manuais
-# `interval`/`burst` do on_demand_tls), mas ainda vale como aviso: aceitável só pra teste
-# curto/baixo tráfego num IP obscuro; NÃO leve isso para produção real.
-# Trocar para deploy/caddy/Caddyfile (DNS-01 + domínio próprio) antes de ter usuários reais.
+# Ainda é modo temporário: cada tenant novo custa uma emissão na Let's Encrypt (rate limit por
+# domínio registrado), então trocar para deploy/caddy/Caddyfile (DNS-01 + domínio próprio, um
+# wildcard só) antes de ter tráfego real.
 {
 	email admin@example.com
+	on_demand_tls {
+		ask http://localhost:9000/check
+	}
+}
+
+# Caddy recusa subir com on_demand sem um "permission module": sem isso, qualquer hostname
+# apontado para este IP viraria um pedido de certificado na Let's Encrypt (oráculo de emissão).
+# Este endpoint autoriza apenas nomes sob ${APP_DOMAIN} — que em modo sslip.io é <IP-do-VPS>.sslip.io,
+# ou seja, só nomes que já resolvem para esta máquina. Escuta em localhost dentro do container e
+# não está em `ports:` no compose, logo não é alcançável de fora.
+http://localhost:9000 {
+	@allowed expression `{http.request.uri.query.domain} == "{$APP_DOMAIN}" || {http.request.uri.query.domain}.endsWith(".{$APP_DOMAIN}")`
+	handle @allowed {
+		respond 200
+	}
+	handle {
+		respond 403
+	}
 }
 
 :443 {

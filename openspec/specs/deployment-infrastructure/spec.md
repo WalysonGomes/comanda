@@ -1,5 +1,9 @@
-## ADDED Requirements
+# deployment-infrastructure Specification
 
+## Purpose
+TBD - created by syncing change deploy-vps. Update Purpose after archive.
+
+## Requirements
 ### Requirement: Artefato único deployável
 
 O sistema SHALL ser empacotado como um único artefato JAR do Spring Boot 4.1 que embarca o build estático da SPA React/Vite, de modo que um único build produza tudo o que é implantado e um único processo sirva tanto a API quanto o frontend.
@@ -130,7 +134,6 @@ O sistema SHALL realizar um dump diário do PostgreSQL via cron no host e manter
 #### Scenario: Cópia off-site do backup
 
 - **WHEN** um dump diário é concluído
-
 - **THEN** uma cópia do dump é enviada para um destino off-site
 
 #### Scenario: Restauração a partir do dump

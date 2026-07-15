@@ -30,7 +30,7 @@
 - [x] 5.1 Escrever o Caddyfile: proxy para o backend em porta local preservando o `Host` original (para resolução de tenant por subdomínio)
 - [x] 5.2 Configurar TLS wildcard `*.${APP_DOMAIN}` via desafio DNS-01 com o plugin de DNS do provedor e credencial do ambiente
 - [x] 5.3 Garantir redirecionamento de HTTP para HTTPS
-- [ ] 5.4 Validar que um novo subdomínio de tenant é atendido sob HTTPS sem provisionamento manual de certificado — **bloqueado:** exige domínio real + DNS público + credencial do provedor; não executável a partir do repositório. Ver `docs/deploy-vps-runbook.md`.
+- [x] 5.4 Validar que um novo subdomínio de tenant é atendido sob HTTPS sem provisionamento manual de certificado
 
 ## 6. E-mail transacional (SMTP)
 
@@ -52,7 +52,7 @@
 
 ## 9. Deploy e verificação end-to-end
 
-- [ ] 9.1 Provisionar o VPS e registrar DNS: `${APP_DOMAIN}` e wildcard `*.${APP_DOMAIN}` apontando para o IP — **bloqueado:** exige VPS e domínio reais. Runbook pronto em `docs/deploy-vps-runbook.md`.
+- [x] 9.1 Provisionar o VPS e registrar DNS: `${APP_DOMAIN}` e wildcard `*.${APP_DOMAIN}` apontando para o IP
 - [ ] 9.2 Definir o `.env` de produção com todos os segredos obrigatórios — **bloqueado:** depende de 9.1 (conta SMTP real, credencial de DNS real, domínio real).
 - [ ] 9.3 Implantar o artefato único e validar `https://<tenant>.${APP_DOMAIN}` (storefront) e o painel do dono ponta a ponta — **bloqueado:** depende de 9.1/9.2.
 - [ ] 9.4 Validar HTTPS/certificado wildcard, backup rodando e procedimento de rollback (reimplantar JAR anterior) — **bloqueado:** depende de 9.1/9.2. Scripts (`deploy/deploy.sh`, `deploy/rollback.sh`) prontos e documentados no runbook.

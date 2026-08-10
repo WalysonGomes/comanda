@@ -2,9 +2,7 @@
 
 ## Purpose
 TBD - created by archiving change pwa. Update Purpose after archive.
-
 ## Requirements
-
 ### Requirement: Painel do dono instalável como PWA
 
 O painel do dono SHALL ser instalável como Progressive Web App em Android (obrigatório) e SHALL prover suporte de instalação em iOS quando o sistema operacional permitir (desejável). O sistema SHALL servir um Web App Manifest válido, referenciado pelas páginas do painel, contendo no mínimo: `name` "Comanda", `short_name` "Comanda", `start_url` e `scope` restritos às rotas do painel, `display: standalone`, `orientation: portrait`, `theme_color` e `background_color`, e um conjunto de ícones cobrindo os propósitos `any` e `maskable` nos tamanhos 192×192 e 512×512 (mais `apple-touch-icon` 180×180 para iOS).
@@ -28,13 +26,17 @@ O painel do dono SHALL ser instalável como Progressive Web App em Android (obri
 - **AND** a ausência de instalação automática não impede o uso normal do painel no navegador
 
 ### Requirement: Aparência do PWA derivada do design aprovado
+O manifest, as tags runtime `theme-color` e os ícones do PWA SHALL usar a identidade visual e o conjunto autoritativo aprovado: `theme_color`, cor de destaque dos ícones/assets e `--acc` SHALL usar `#b53c25`; `background_color` SHALL usar `--cream #f7f1e6`. Os ícones NÃO SHALL conter emojis. A geração SHALL ser reproduzível sem a referência local não rastreada `.design`.
 
-O manifest e os ícones do PWA SHALL usar a identidade visual aprovada em `.design/Comanda Painel.dc.html`: `theme_color` e cor de destaque do ícone derivados de `--acc` (`#d6492f`) e `background_color` derivado de `--cream` (`#f7f1e6`), com a marca "Comanda". Os ícones NÃO SHALL conter emojis (regra 13 do PRD).
+#### Scenario: Cores e marca do manifest estão sincronizadas
+- **WHEN** o PWA é instalado e a splash/ícone são exibidos pelo sistema
+- **THEN** `theme_color`, tags runtime e cor de destaque da marca correspondem ao `--acc` autoritativo
+- **AND** a `background_color` corresponde ao `--cream` autoritativo
+- **AND** o ícone exibe a marca Comanda sem emojis
 
 #### Scenario: Cores e marca do manifest
-
 - **WHEN** o PWA é instalado e a splash/ícone são exibidos pelo sistema
-- **THEN** a `background_color` da splash é `#f7f1e6` e o `theme_color` é `#d6492f`
+- **THEN** a `background_color` da splash corresponde ao `--cream` autoritativo e o `theme_color` corresponde ao `--acc` autoritativo
 - **AND** o ícone exibe a marca "Comanda" sobre a cor de destaque, sem emojis
 
 ### Requirement: Service Worker com precache e uso offline de telas carregadas

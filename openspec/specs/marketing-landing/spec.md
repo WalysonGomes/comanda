@@ -1,5 +1,8 @@
-## ADDED Requirements
+# marketing-landing Specification
 
+## Purpose
+TBD - created by archiving change 2026-07-24-design-refresh. Update Purpose after archive.
+## Requirements
 ### Requirement: Landing institucional no domínio raiz
 O sistema SHALL renderizar uma landing institucional na rota `/` quando o host for o domínio raiz aprovado ou um alias reservado configurado, sem substituir o storefront servido em subdomínios de tenant.
 
@@ -47,3 +50,4 @@ A landing e o roteamento por host SHALL possuir testes automatizados; o frontend
 - **WHEN** a implementação é proposta para release
 - **THEN** build, lint, testes frontend, testes relevantes de serving estático e comparação visual documentada estão aprovados
 - **AND** o bloqueador conhecido de checkout foi resolvido ou impede a aprovação
+

@@ -8,6 +8,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.comanda.ComandaApiApplication;
+import com.comanda.TestDomain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -108,7 +109,7 @@ class LogSafetyTest {
 
             mockMvc.perform(MockMvcRequestBuilders.post("/api/loja/pedidos")
                     .with(request -> {
-                        request.setServerName("log-safety-tenant.comanda.local");
+                        request.setServerName(TestDomain.host("log-safety-tenant"));
                         return request;
                     })
                     .contentType(MediaType.APPLICATION_JSON)

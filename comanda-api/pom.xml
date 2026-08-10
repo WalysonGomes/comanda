@@ -31,6 +31,7 @@
 		<frontend.dir>${project.basedir}/../comanda-client</frontend.dir>
 		<frontend.node.version>v22.22.0</frontend.node.version>
 		<frontend.yarn.version>v1.22.22</frontend.yarn.version>
+		<backend.test.domain>comanda.test</backend.test.domain>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -135,6 +136,15 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<app.domain>${backend.test.domain}</app.domain>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

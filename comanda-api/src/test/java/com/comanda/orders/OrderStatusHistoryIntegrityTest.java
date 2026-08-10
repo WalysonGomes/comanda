@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.comanda.ComandaApiApplication;
+import com.comanda.TestDomain;
 import com.comanda.orders.domain.OrderStatusHistory;
 import com.comanda.orders.domain.OrderStatusHistoryRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -172,7 +173,7 @@ class OrderStatusHistoryIntegrityTest {
                 String.class);
         MvcResult result = mockMvc.perform(post("/api/loja/pedidos")
                         .with(request -> {
-                            request.setServerName(subdomain + ".comanda.local");
+                            request.setServerName(TestDomain.host(subdomain));
                             return request;
                         })
                         .contentType(MediaType.APPLICATION_JSON)

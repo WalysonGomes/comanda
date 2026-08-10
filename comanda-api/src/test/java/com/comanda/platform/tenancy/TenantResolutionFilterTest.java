@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.comanda.ComandaApiApplication;
+import com.comanda.TestDomain;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +53,7 @@ class TenantResolutionFilterTest {
         Long tenantId = insertTenant("acme");
 
         mockMvc.perform(get("/api/loja/ping").with(request -> {
-                    request.setServerName("acme.comanda.local");
+                    request.setServerName(TestDomain.host("acme"));
                     return request;
                 }))
                 .andExpect(status().isOk())
@@ -62,7 +63,7 @@ class TenantResolutionFilterTest {
     @Test
     void publicRouteWithUnknownSubdomainIsRejectedBeforeReachingTheHandler() throws Exception {
         mockMvc.perform(get("/api/loja/ping").with(request -> {
-                    request.setServerName("nao-existe.comanda.local");
+                    request.setServerName(TestDomain.host("nao-existe"));
                     return request;
                 }))
                 .andExpect(status().isNotFound());

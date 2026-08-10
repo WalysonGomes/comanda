@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.comanda.ComandaApiApplication;
+import com.comanda.TestDomain;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.UUID;
@@ -282,7 +283,7 @@ class PlanEnforcementFlowTest {
     private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder withSubdomain(
             org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder builder, String subdomain) {
         return builder.with(request -> {
-            request.setServerName(subdomain + ".comanda.local");
+            request.setServerName(TestDomain.host(subdomain));
             return request;
         });
     }

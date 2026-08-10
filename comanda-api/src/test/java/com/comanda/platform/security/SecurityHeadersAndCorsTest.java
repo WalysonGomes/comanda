@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.comanda.ComandaApiApplication;
+import com.comanda.TestDomain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,11 +51,12 @@ class SecurityHeadersAndCorsTest {
 
     @Test
     void knownSubdomainOriginIsAllowedByCors() throws Exception {
+        String origin = TestDomain.origin("http", "demo");
         mockMvc.perform(options("/api/auth/login")
-                        .header(HttpHeaders.ORIGIN, "http://demo.comanda.local")
+                        .header(HttpHeaders.ORIGIN, origin)
                         .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://demo.comanda.local"));
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin));
     }
 
     @Test

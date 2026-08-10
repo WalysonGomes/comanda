@@ -17,7 +17,7 @@ export function formatRelativeTime(iso: string): string {
 
 /** Status META — colors/labels copied verbatim from `.design/Comanda Painel.dc.html` (`META`). */
 export const STATUS_META: Record<OrderStatus, { label: string; fg: string; bg: string; accent: string; step: number }> = {
-  RECEBIDO: { label: 'Novo', fg: '#b53c25', bg: '#fbe6df', accent: '#d6492f', step: 0 },
+  RECEBIDO: { label: 'Novo', fg: '#9c351f', bg: '#fbe6df', accent: '#b53c25', step: 0 },
   ACEITO: { label: 'Aceito', fg: '#2f49b8', bg: '#e7ebfb', accent: '#3b5bd0', step: 1 },
   EM_PREPARO: { label: 'Em preparo', fg: '#7a5310', bg: '#f7ecd2', accent: '#c9881a', step: 2 },
   PRONTO: { label: 'Pronto', fg: '#176b41', bg: '#dcefe1', accent: '#1f8a52', step: 3 },
@@ -26,9 +26,9 @@ export const STATUS_META: Record<OrderStatus, { label: string; fg: string; bg: s
 }
 
 export const STEPS: { label: string; color: string }[] = [
-  { label: 'Novo', color: '#d6492f' },
+  { label: 'Novo', color: '#b53c25' },
   { label: 'Aceito', color: '#3b5bd0' },
-  { label: 'Preparo', color: '#c9881a' },
+  { label: 'Em preparo', color: '#c9881a' },
   { label: 'Pronto', color: '#1f8a52' },
   { label: 'Entregue', color: '#8a7f6e' },
 ]

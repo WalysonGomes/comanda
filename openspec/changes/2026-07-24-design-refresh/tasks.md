@@ -26,7 +26,7 @@
 
 - [x] 4.1 Executar build, lint e testes do frontend
 - [x] 4.2 Executar testes relevantes do backend e do serving estático, incluindo referências a assets, fallback SPA, manifest e Service Worker
-- [ ] 4.3 Comparar visualmente landing e painel contra as referências aprovadas em viewport móvel e desktop
+- [x] 4.3 Comparar visualmente landing e painel contra as referências aprovadas em viewport móvel e desktop
 - [x] 4.4 Validar que nenhum texto contradiz o bloqueador conhecido de checkout e registrar a decisão de release
 - [x] 4.5 Validar esta change e todas as specs com OpenSpec em modo estrito
 - [ ] 4.6 Ao arquivar a change, sincronizar os deltas com as specs consolidadas e confirmar `openspec validate --all --strict`

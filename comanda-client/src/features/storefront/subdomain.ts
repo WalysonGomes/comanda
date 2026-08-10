@@ -1,39 +1,64 @@
-const APP_DOMAIN = 'comanda.local'
+export type RootSurface = 'landing' | 'storefront'
 
-/**
- * Checks if the current hostname corresponds to a tenant subdomain.
- * Returns true if on a tenant subdomain (e.g. meunegocio.comanda.local) or if ?storefront parameter is set.
- */
-export function hasTenantSubdomain(hostname: string = typeof window !== 'undefined' ? window.location.hostname : ''): boolean {
-  if (typeof window !== 'undefined' && window.location.search.includes('storefront')) {
-    return true
-  }
-  const suffix = `.${APP_DOMAIN}`
-  if (hostname.endsWith(suffix)) {
-    const sub = hostname.slice(0, -suffix.length)
-    return sub.length > 0 && sub !== 'www' && sub !== 'app'
-  }
-  const parts = hostname.split('.')
-  if (
-    parts.length > 1 &&
-    parts[0] !== 'www' &&
-    parts[0] !== 'app' &&
-    parts[0] !== 'comanda' &&
-    hostname !== 'localhost' &&
-    !/^\d+\.\d+\.\d+\.\d+$/.test(hostname)
-  ) {
-    return true
-  }
-  return false
+export interface HostRoutingConfig {
+  rootDomains: readonly string[]
+  rootAliases: readonly string[]
+  reservedLabels?: readonly string[]
 }
 
-/**
- * Only used to namespace the cart's `localStorage` key (design.md Decision 4) so two businesses
- * never share a cart — tenant *security* is enforced server-side from the real `Host` header
- * (spec `multi-tenancy`), never from this. Falls back to the raw hostname outside `$APP_DOMAIN`
- * (e.g. `localhost` in dev), which is still a stable per-host key.
- */
-export function getStorefrontSlug(hostname: string = typeof window !== 'undefined' ? window.location.hostname : ''): string {
-  const suffix = `.${APP_DOMAIN}`
-  return hostname.endsWith(suffix) ? hostname.slice(0, -suffix.length) : hostname
+const DEFAULT_RESERVED_LABELS = ['www', 'app']
+const TENANT_LABEL = /^(?!-)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/
+
+function normalizeHost(hostname: string): string {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '')
+}
+
+function configuredHosts(value: string | undefined): string[] {
+  return (value ?? '').split(',').map(normalizeHost).filter(Boolean)
+}
+
+export const hostRoutingConfig: HostRoutingConfig = {
+  rootDomains: configuredHosts(import.meta.env.VITE_ROOT_DOMAINS),
+  rootAliases: configuredHosts(import.meta.env.VITE_ROOT_HOST_ALIASES),
+}
+
+export function selectRootSurface(hostname: string, config: HostRoutingConfig): RootSurface {
+  const host = normalizeHost(hostname)
+  if (!host || host === 'localhost' || host === '::1' || /^127(?:\.\d{1,3}){3}$/.test(host)) return 'landing'
+
+  const roots = config.rootDomains.map(normalizeHost)
+  const aliases = config.rootAliases.map(normalizeHost)
+  if (roots.includes(host) || aliases.includes(host)) return 'landing'
+
+  const reserved = new Set([...(config.reservedLabels ?? DEFAULT_RESERVED_LABELS), ...DEFAULT_RESERVED_LABELS])
+  for (const root of roots) {
+    const suffix = `.${root}`
+    if (!host.endsWith(suffix)) continue
+    const label = host.slice(0, -suffix.length)
+    return TENANT_LABEL.test(label) && !reserved.has(label) ? 'storefront' : 'landing'
+  }
+  return 'landing'
+}
+
+export function hasTenantSubdomain(
+  hostname: string = typeof window !== 'undefined' ? window.location.hostname : '',
+  search: string = typeof window !== 'undefined' ? window.location.search : '',
+  config: HostRoutingConfig = hostRoutingConfig,
+  isDevelopment: boolean = import.meta.env.DEV,
+): boolean {
+  if (isDevelopment && new URLSearchParams(search).has('storefront')) return true
+  return selectRootSurface(hostname, config) === 'storefront'
+}
+
+/** Cart namespacing only. Tenant authorization and isolation remain server-side. */
+export function getStorefrontSlug(
+  hostname: string = typeof window !== 'undefined' ? window.location.hostname : '',
+  config: HostRoutingConfig = hostRoutingConfig,
+): string {
+  const host = normalizeHost(hostname)
+  for (const root of config.rootDomains.map(normalizeHost)) {
+    const suffix = `.${root}`
+    if (host.endsWith(suffix)) return host.slice(0, -suffix.length)
+  }
+  return host
 }

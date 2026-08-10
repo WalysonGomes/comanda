@@ -50,4 +50,3 @@ A landing e o roteamento por host SHALL possuir testes automatizados; o frontend
 - **WHEN** a implementação é proposta para release
 - **THEN** build, lint, testes frontend, testes relevantes de serving estático e comparação visual documentada estão aprovados
 - **AND** o bloqueador conhecido de checkout foi resolvido ou impede a aprovação
-

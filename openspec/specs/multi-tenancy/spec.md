@@ -24,6 +24,12 @@ O sistema SHALL isolar dados por `tenant_id` em toda persistência e leitura. Ne
 ### Requirement: Tenant resolution by subdomain on public routes
 O sistema SHALL resolver o tenant atual pelo subdomínio (`nomedonegocio.${APP_DOMAIN}`) nas rotas públicas do storefront e injetá-lo no contexto da requisição.
 
+Os rótulos `www`, `app`, `api`, `docs`, `status`, `admin`, `demo` e `signal` SHALL ser permanentemente reservados para superfícies oficiais. O backend SHALL ser a fronteira autoritativa, apó normalização case-insensitive; o frontend MAY espelhar a lista somente para feedback imediato. Hosts reservados SHALL resolver para a superfície raiz, nunca para storefront.
+
+#### Scenario: Rótulo oficial não vira tenant
+- **WHEN** cadastro ou alteração de dados do negócio solicita um rótulo reservado, com qualquer caixa ou espaços externos
+- **THEN** o backend rejeita o subdomínio e nenhuma alteração parcial é persistida
+
 #### Scenario: Subdomínio conhecido resolve tenant
 - **WHEN** uma requisição pública chega em `nomedonegocio.${APP_DOMAIN}` e existe um tenant com `subdomain` = `nomedonegocio`
 - **THEN** o sistema injeta esse tenant no contexto da requisição
@@ -40,4 +46,3 @@ O sistema SHALL resolver o tenant atual pelo JWT nas rotas autenticadas do paine
 - **WHEN** uma requisição autenticada do painel apresenta um JWT válido que carrega o tenant
 - **THEN** o sistema injeta o tenant do JWT no contexto da requisição
 - **AND** todas as queries ficam filtradas por esse `tenant_id`
-

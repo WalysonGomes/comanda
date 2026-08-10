@@ -316,7 +316,7 @@ A **lógica de planos é código desde o MVP** — o enforcement de limites cria
 
 ## 7. Stack Técnica
 
-A stack é deliberadamente consolidada em **um único VPS**. Nada de orquestrar quatro serviços gratuitos com limitações distintas: um servidor, um banco, um proxy reverso. Menos superfície de falha, menos dependências externas, custo fixo previsível e baixo.
+A stack será consolidada em **um VPS compartilhado**, com ambientes de produção e demonstração isolados. Nada de orquestrar quatro serviços gratuitos com limitações distintas: um servidor e um ingress compartilhado, com bancos, segredos e volumes separados por ambiente.
 
 ### 7.1 Backend
 
@@ -348,7 +348,7 @@ O frontend é uma **SPA React servida estaticamente pelo backend** — sem frame
 | Ícones            | Lucide React    | Sem emojis na UI                                                                   |
 | PWA               | Vite PWA plugin | Manifest + Service Worker básico                                                   |
 
-### 7.3 Infraestrutura — VPS único
+### 7.3 Infraestrutura — VPS compartilhado
 
 | Componente             | Decisão                                            | Observação                                                                           |
 | ---------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------ |
@@ -356,13 +356,17 @@ O frontend é uma **SPA React servida estaticamente pelo backend** — sem frame
 | Proxy reverso / TLS    | Caddy                                              | HTTPS automático; wildcard de subdomínio (`*.${APP_DOMAIN}`) com configuração mínima |
 | Banco                  | PostgreSQL no próprio host                         | Sem serviço gerenciado, sem pausa por inatividade, sem keep-alive                    |
 | Armazenamento de fotos | Disco local do VPS (ou bucket S3-compatível)       | Local resolve o MVP; migrar para bucket quando o volume justificar                   |
-| Deploy                 | Artefato único (JAR) + frontend estático embarcado | Um build, um deploy. Docker Compose opcional para reproduzir local/prod              |
+| Deploy                 | Docker Compose com JAR + frontend estático embarcado | O JAR permanece o artefato da aplicação dentro da imagem                       |
 | E-mails transacionais  | Provedor SMTP transacional (free tier)             | Onboarding e recuperação de senha                                                    |
 | Backup                 | Dump diário do Postgres                            | Cron no host + cópia off-site                                                        |
 
 **Domínio:** ~R$ 40/ano no Registro.br — único custo fixo relevante antes da validação, somado ao VPS (~€4/mês). Sem dependência de free tiers com regras de pausa ou cold start.
 
 **Wildcard de subdomínio:** o Caddy resolve TLS para `*.${APP_DOMAIN}` automaticamente, então cada novo tenant ganha `nomedonegocio.${APP_DOMAIN}` sem provisionamento manual.
+
+**Política de domínio:** a raiz oficial é `${APP_DOMAIN}` e cada vitrine usa `<tenant>.${APP_DOMAIN}`. `www`, `app`, `api`, `docs`, `status`, `admin`, `demo` e `signal` são reservados e não podem ser registrados, com enforcement autoritativo no backend. `.design` é material local e permanece sem rastreamento no Git.
+
+**Infraestrutura futura (deferred):** o VPS será compartilhado por ambientes isolados de produção e demonstração. Compose concreto, ingress, redes, limites, DNS/TLS, bancos, segredos, volumes, Signal, backups e reset da demo somente serão definidos e validados quando o VPS existir. As regras de produto e multi-tenancy não mudam.
 
 ### 7.4 Multi-tenancy
 

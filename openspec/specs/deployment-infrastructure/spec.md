@@ -145,6 +145,8 @@ O sistema SHALL realizar um dump diário do PostgreSQL via cron no host e manter
 
 O sistema SHALL prover um Docker Compose que suba app, PostgreSQL e Caddy juntos, de modo a reproduzir o ambiente local e de produção com uma única definição.
 
+O JAR Spring com a SPA embarcada SHALL permanecer o artefato da aplicação dentro da imagem. A implantação futura SHALL usar um VPS compartilhado com ambientes de produção e demonstração isolados. A topologia Compose concreta, redes, limites, DNS/TLS, segredos, volumes, backups, reset de demo, ingress compartilhado e Signal estão explicitamente DEFERRED até o VPS existir; esta especificação não declara essa infraestrutura implementada ou validada.
+
 #### Scenario: Compose sobe a stack completa
 
 - **WHEN** o Docker Compose é iniciado

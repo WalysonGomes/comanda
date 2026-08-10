@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router'
 import { PainelTabBar } from '@/components/PainelTabBar'
 import { usePlanStatus } from '@/features/plans/queries'
 
-/**
- * Bloco `AJUSTES` (`.design/Comanda Painel.dc.html` lines 420-441), scoped to what this change
- * needs: the plan badge header and the two rows this change builds ("Meu link", "Plano e uso").
- * "Dados do negócio" isn't wired here — that CRUD belongs to a settings capability not yet built,
- * out of `plans-and-onboarding`'s scope.
- */
 export function AjustesScreen() {
   const navigate = useNavigate()
   const statusQuery = usePlanStatus()

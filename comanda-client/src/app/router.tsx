@@ -15,6 +15,7 @@ import { PainelShell } from '@/features/painel/PainelShell'
 import { MeuLinkScreen } from '@/features/plans/MeuLinkScreen'
 import { PlanoUsoScreen } from '@/features/plans/PlanoUsoScreen'
 import { LandingPage } from '@/features/landing/LandingPage'
+import { BusinessSettingsScreen } from '@/features/business-settings/BusinessSettingsScreen'
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +60,7 @@ export const router = createBrowserRouter([
       { path: 'cardapio/produtos/novo', element: <ProductEditorScreen /> },
       { path: 'cardapio/produtos/:productId', element: <ProductEditorScreen /> },
       { path: 'ajustes', element: <AjustesScreen /> },
+      { path: 'ajustes/dados-do-negocio', element: <BusinessSettingsScreen /> },
       { path: 'ajustes/meu-link', element: <MeuLinkScreen /> },
       { path: 'ajustes/plano', element: <PlanoUsoScreen /> },
     ],

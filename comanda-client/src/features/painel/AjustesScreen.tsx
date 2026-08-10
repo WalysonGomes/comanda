@@ -1,4 +1,4 @@
-import { ChevronRight, CreditCard, Link2 } from 'lucide-react'
+import { Building2, ChevronRight, CreditCard, Link2 } from 'lucide-react'
 import { useNavigate } from 'react-router'
 
 import { PainelTabBar } from '@/components/PainelTabBar'
@@ -16,6 +16,7 @@ export function AjustesScreen() {
   const status = statusQuery.data
 
   const rows = [
+    { key: 'business', label: 'Dados do negócio', sub: 'Nome, logo, horários e endereço', icon: Building2, path: '/painel/ajustes/dados-do-negocio' },
     {
       key: 'meu-link',
       label: 'Meu link',

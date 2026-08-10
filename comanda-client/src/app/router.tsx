@@ -3,6 +3,7 @@ import { Navigate, createBrowserRouter } from 'react-router'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { SignupPage } from '@/features/auth/SignupPage'
+import { LandingPage } from '@/features/landing/LandingPage'
 import { PrivacyPolicyPage } from '@/features/legal/PrivacyPolicyPage'
 import { TermsPage } from '@/features/legal/TermsPage'
 import { MenuScreen } from '@/features/menu/MenuScreen'
@@ -14,17 +15,24 @@ import { PainelShell } from '@/features/painel/PainelShell'
 import { MeuLinkScreen } from '@/features/plans/MeuLinkScreen'
 import { PlanoUsoScreen } from '@/features/plans/PlanoUsoScreen'
 import { StorefrontShell } from '@/features/storefront/StorefrontShell'
+import { hasTenantSubdomain } from '@/features/storefront/subdomain'
 
-/**
- * Storefront publico e painel do dono no mesmo bundle SPA, separados por rota (D5 / spec
- * `design-system`). `/painel/*` exige sessao (owner-auth); `pedidos` (order-operation) e a tela
- * de operacao do dono, agora o destino padrao do shell (antes apontava para `cardapio` por nao
- * existir ainda).
- */
+function RootRoute() {
+  const isTenant = hasTenantSubdomain()
+  if (isTenant) {
+    return <StorefrontShell />
+  }
+  return <LandingPage />
+}
+
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <StorefrontShell />,
+    element: <RootRoute />,
+  },
+  {
+    path: '/landing',
+    element: <LandingPage />,
   },
   {
     path: '/login',

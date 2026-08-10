@@ -1,0 +1,98 @@
+/* Landing page styles — 1:1 from .design/Comanda Landing.dc.html */
+
+.lp-root {
+  --acc: #b53c25;
+  --acc-d: #9c351f;
+  --acc-tint: #fbe6df;
+  --ink: #2a2320;
+  --ink2: #6f6557;
+  --ink3: #7d7263;
+  --line: #e8ddcc;
+  --cream: #f7f1e6;
+  --card: #fffdf9;
+  --green: #1f8a52;
+  --green-tint: #e2f0e4;
+}
+
+.lp-root[data-accent='green'] {
+  --acc: #1f8a52;
+  --acc-d: #176b41;
+  --acc-tint: #dcece0;
+}
+
+.lp-root a {
+  color: var(--acc);
+  text-decoration: none;
+}
+.lp-root a:hover {
+  color: #7a2417;
+  text-decoration: underline;
+}
+
+.lp-root button {
+  transition:
+    transform 0.16s cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 0.22s ease,
+    filter 0.18s ease,
+    background 0.2s ease;
+}
+.lp-root button:hover {
+  filter: brightness(1.05);
+}
+.lp-root button:active {
+  transform: scale(0.97);
+}
+.lp-root button:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+@keyframes lp-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
+@keyframes lp-float2 {
+  from {
+    transform: translateY(-8px);
+  }
+  to {
+    transform: translateY(4px);
+  }
+}
+
+.lp-anim .rv {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.75s ease,
+    transform 0.75s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.lp-anim .rv.on {
+  opacity: 1;
+  transform: none;
+}
+
+.lp-card {
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+.lp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px -18px rgba(60, 42, 24, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-root * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .rv {
+    opacity: 1;
+    transform: none;
+  }
+}

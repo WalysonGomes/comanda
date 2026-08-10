@@ -19,14 +19,14 @@ export function formatRelativeTime(iso: string): string {
 export const STATUS_META: Record<OrderStatus, { label: string; fg: string; bg: string; accent: string; step: number }> = {
   RECEBIDO: { label: 'Novo', fg: '#b53c25', bg: '#fbe6df', accent: '#d6492f', step: 0 },
   ACEITO: { label: 'Aceito', fg: '#2f49b8', bg: '#e7ebfb', accent: '#3b5bd0', step: 1 },
-  EM_PREPARO: { label: 'Em preparo', fg: '#9a6510', bg: '#f7ecd2', accent: '#c9881a', step: 2 },
+  EM_PREPARO: { label: 'Em preparo', fg: '#7a5310', bg: '#f7ecd2', accent: '#c9881a', step: 2 },
   PRONTO: { label: 'Pronto', fg: '#176b41', bg: '#dcefe1', accent: '#1f8a52', step: 3 },
   ENTREGUE: { label: 'Entregue', fg: '#6a6052', bg: '#eee8dd', accent: '#8a7f6e', step: 4 },
   CANCELADO: { label: 'Cancelado', fg: '#8a4a3d', bg: '#f0e1dc', accent: '#a05a4c', step: -1 },
 }
 
 export const STEPS: { label: string; color: string }[] = [
-  { label: 'Recebido', color: '#d6492f' },
+  { label: 'Novo', color: '#d6492f' },
   { label: 'Aceito', color: '#3b5bd0' },
   { label: 'Preparo', color: '#c9881a' },
   { label: 'Pronto', color: '#1f8a52' },

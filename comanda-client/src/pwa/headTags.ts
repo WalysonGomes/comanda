@@ -14,7 +14,7 @@ export function injectPainelHeadTags(): void {
 
   const themeColor = document.createElement('meta')
   themeColor.name = 'theme-color'
-  themeColor.content = '#d6492f'
+  themeColor.content = '#b53c25'
   head.appendChild(themeColor)
 
   const appleTouchIcon = document.createElement('link')

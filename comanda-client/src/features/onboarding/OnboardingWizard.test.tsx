@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { OnboardingWizard } from '@/features/onboarding/OnboardingWizard'
+import { tenantMenuHost } from '@/lib/domain'
 
 /**
  * Task 10.8: the wizard's happy path end to end (segmento → conta → horário → primeiro produto →
@@ -91,7 +92,7 @@ describe('OnboardingWizard', () => {
 
     // Step 4: pronto — cardápio published at the subdomain typed in step 1.
     await waitFor(() => expect(screen.getByText(/está no ar/)).toBeInTheDocument())
-    expect(screen.getByText('marmitasdaana.comanda.app')).toBeInTheDocument()
+    expect(screen.getByText(tenantMenuHost('marmitasdaana'))).toBeInTheDocument()
     expect(screen.getByText('Compartilhar no WhatsApp')).toBeInTheDocument()
   })
 })

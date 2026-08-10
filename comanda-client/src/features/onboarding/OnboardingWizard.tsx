@@ -12,8 +12,8 @@ import { HoursStep } from '@/features/onboarding/steps/HoursStep'
 import { DoneStep } from '@/features/onboarding/steps/DoneStep'
 import { FirstProductStep, type FirstProductFields } from '@/features/onboarding/steps/FirstProductStep'
 import { SegmentStep } from '@/features/onboarding/steps/SegmentStep'
+import { isReservedTenantLabel, tenantMenuHost } from '@/lib/domain'
 
-const SUBDOMAIN_SUFFIX = '.comanda.app'
 const STEP_COUNT = 5
 
 const EMPTY_ACCOUNT: AccountFields = { name: '', businessName: '', subdomain: '', whatsappNumber: '', email: '', password: '' }
@@ -75,6 +75,7 @@ export function OnboardingWizard() {
         setAccountError('Preencha todos os campos para continuar.')
         return
       }
+      if (isReservedTenantLabel(account.subdomain)) { setAccountError('Este subdomínio é reservado.'); return }
       setAccountError(null)
       setSubmitting(true)
       try {
@@ -188,7 +189,7 @@ export function OnboardingWizard() {
         {step === 1 && <AccountStep fields={account} onChange={setAccount} error={accountError} />}
         {step === 2 && <HoursStep rows={hours} onChange={setHours} />}
         {step === 3 && <FirstProductStep fields={product} onChange={setProductEdits} />}
-        {step === 4 && <DoneStep menuUrl={`${account.subdomain}${SUBDOMAIN_SUFFIX}`} businessName={account.businessName} />}
+        {step === 4 && <DoneStep menuUrl={tenantMenuHost(account.subdomain)} businessName={account.businessName} />}
         {stepError && step !== 1 && <p className="mt-4 text-[13px] font-semibold text-[#a05a4c]">{stepError}</p>}
       </div>
 

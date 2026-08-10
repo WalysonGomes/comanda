@@ -3,9 +3,11 @@
 # `${frontend.dir}`) and produce one JAR with the SPA embedded.
 FROM maven:3.9-eclipse-temurin-21 AS build
 ARG APP_DOMAIN
+ARG VITE_TENANT_DOMAIN
 ARG VITE_ROOT_HOST_ALIASES=""
 RUN test -n "$APP_DOMAIN" || (echo "APP_DOMAIN build argument is required" >&2; exit 1)
 ENV APP_DOMAIN=$APP_DOMAIN
+ENV VITE_TENANT_DOMAIN=${VITE_TENANT_DOMAIN:-$APP_DOMAIN}
 ENV VITE_ROOT_HOST_ALIASES=$VITE_ROOT_HOST_ALIASES
 WORKDIR /workspace
 COPY comanda-client comanda-client

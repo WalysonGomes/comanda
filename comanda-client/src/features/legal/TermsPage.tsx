@@ -1,4 +1,5 @@
 import { LegalPageShell } from '@/features/legal/LegalPageShell'
+import { canonicalTenantDomain } from '@/lib/domain'
 
 /**
  * Static terms of service (task 8.2, PRD Seção 9/LGPD): carries the controller-operator clause
@@ -49,8 +50,8 @@ export function TermsPage() {
       <h2>Contato</h2>
       <p>
         Para dúvidas sobre estes termos ou sobre tratamento de dados pessoais:{' '}
-        <a href="mailto:privacidade@comanda.app" className="font-semibold text-acc-d underline">
-          privacidade@comanda.app
+        <a href={`mailto:privacidade@${canonicalTenantDomain}`} className="font-semibold text-acc-d underline">
+          privacidade@{canonicalTenantDomain}
         </a>
         .
       </p>

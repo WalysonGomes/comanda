@@ -1,15 +1,8 @@
 import { useMemo, type ReactNode } from 'react'
+import { normalizeTenantLabel, tenantDomainSuffix, tenantMenuHost } from '@/lib/domain'
 
-const SUBDOMAIN_SUFFIX = '.comanda.app'
 const INPUT_CLASS =
   'w-full rounded-xl border-[1.5px] border-line bg-card px-3.5 py-3.5 text-[15px] text-ink outline-none focus:border-acc'
-
-function normalizeSubdomainInput(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-{2,}/g, '-')
-}
 
 export type AccountFields = {
   name: string
@@ -35,7 +28,7 @@ export function AccountStep({
   error: string | null
 }) {
   const subdomainPreview = useMemo(
-    () => `${fields.subdomain || 'seunegocio'}${SUBDOMAIN_SUFFIX}`,
+    () => tenantMenuHost(fields.subdomain || 'seunegocio'),
     [fields.subdomain],
   )
 
@@ -77,11 +70,11 @@ export function AccountStep({
             <input
               id="ob-subdomain"
               value={fields.subdomain}
-              onChange={(e) => set('subdomain', normalizeSubdomainInput(e.target.value))}
+              onChange={(e) => set('subdomain', normalizeTenantLabel(e.target.value))}
               placeholder="brasaburger"
               className="w-[42%] flex-none border-none bg-transparent py-3.5 font-mono text-[15px] font-bold text-acc-d outline-none"
             />
-            <span className="font-mono text-sm font-semibold text-ink-3">{SUBDOMAIN_SUFFIX}</span>
+            <span className="font-mono text-sm font-semibold text-ink-3">{tenantDomainSuffix}</span>
           </div>
           <p className="mt-1.5 text-xs text-ink-3">
             Seu cardápio ficará em <b className="font-bold text-ink-2">{subdomainPreview}</b>

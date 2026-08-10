@@ -1,4 +1,5 @@
 import { LegalPageShell } from '@/features/legal/LegalPageShell'
+import { canonicalTenantDomain } from '@/lib/domain'
 
 /**
  * Static privacy policy (task 8.1, PRD Seção 9/LGPD): describes what personal data the product
@@ -63,8 +64,8 @@ export function PrivacyPolicyPage() {
       <h2>Contato de privacidade</h2>
       <p>
         Dúvidas, solicitações ou incidentes envolvendo dados pessoais:{' '}
-        <a href="mailto:privacidade@comanda.app" className="font-semibold text-acc-d underline">
-          privacidade@comanda.app
+        <a href={`mailto:privacidade@${canonicalTenantDomain}`} className="font-semibold text-acc-d underline">
+          privacidade@{canonicalTenantDomain}
         </a>
         .
       </p>

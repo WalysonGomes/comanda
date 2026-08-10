@@ -6,7 +6,9 @@ export interface HostRoutingConfig {
   reservedLabels?: readonly string[]
 }
 
-const DEFAULT_RESERVED_LABELS = ['www', 'app']
+import { RESERVED_TENANT_LABELS } from '@/lib/domain'
+
+const DEFAULT_RESERVED_LABELS = RESERVED_TENANT_LABELS
 const TENANT_LABEL = /^(?!-)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/
 
 function normalizeHost(hostname: string): string {

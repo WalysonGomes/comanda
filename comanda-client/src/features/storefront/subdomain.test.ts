@@ -22,7 +22,7 @@ describe('root surface host routing', () => {
     expect(selectRootSurface(host, config)).toBe(surface)
   })
 
-  it.each(['www', 'app'])('keeps reserved label %s on landing', (label) => {
+  it.each(['www', 'app', 'api', 'docs', 'status', 'admin', 'demo', 'signal'])('keeps reserved label %s on landing', (label) => {
     expect(selectRootSurface(`${label}.comanda.example`, config)).toBe('landing')
   })
 

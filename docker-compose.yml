@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
       args:
         APP_DOMAIN: ${APP_DOMAIN:?defina APP_DOMAIN para compilar o roteamento frontend}
+        VITE_TENANT_DOMAIN: ${VITE_TENANT_DOMAIN:-${APP_DOMAIN}}
         VITE_ROOT_HOST_ALIASES: ${VITE_ROOT_HOST_ALIASES:-}
     env_file: .env
     volumes:

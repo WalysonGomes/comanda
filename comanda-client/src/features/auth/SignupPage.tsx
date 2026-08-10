@@ -5,17 +5,10 @@ import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/auth-context'
 import { ApiError, type SignupPayload } from '@/lib/api'
+import { isReservedTenantLabel, normalizeTenantLabel, tenantDomainSuffix, tenantMenuHost } from '@/lib/domain'
 
-const SUBDOMAIN_SUFFIX = '.comanda.app'
 const INPUT_CLASS =
   'w-full rounded-xl border-[1.5px] border-line bg-card px-3.5 py-3.5 text-[15px] text-ink outline-none focus:border-acc'
-
-function normalizeSubdomainInput(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-{2,}/g, '-')
-}
 
 /**
  * Reaproveita só a criação de conta do bloco "Crie sua conta" / `ob1` de
@@ -36,13 +29,14 @@ export function SignupPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const subdomainPreview = useMemo(
-    () => `${subdomain || 'seunegocio'}${SUBDOMAIN_SUFFIX}`,
+    () => tenantMenuHost(subdomain || 'seunegocio'),
     [subdomain],
   )
 
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault()
     setError(null)
+    if (isReservedTenantLabel(subdomain)) { setError('Este subdomínio é reservado.'); return }
     setSubmitting(true)
 
     const payload: SignupPayload = { name, businessName, subdomain, whatsappNumber, email, password }
@@ -94,12 +88,12 @@ export function SignupPage() {
             <input
               id="signup-subdomain"
               value={subdomain}
-              onChange={(event) => setSubdomain(normalizeSubdomainInput(event.target.value))}
+              onChange={(event) => setSubdomain(normalizeTenantLabel(event.target.value))}
               placeholder="brasaburger"
               className="w-[42%] flex-none border-none bg-transparent py-3.5 font-mono text-[15px] font-bold text-acc-d outline-none"
               required
             />
-            <span className="font-mono text-sm font-semibold text-ink-3">{SUBDOMAIN_SUFFIX}</span>
+            <span className="font-mono text-sm font-semibold text-ink-3">{tenantDomainSuffix}</span>
           </div>
           <p className="mt-1.5 text-xs text-ink-3">
             Seu cardápio ficará em <b className="font-bold text-ink-2">{subdomainPreview}</b>

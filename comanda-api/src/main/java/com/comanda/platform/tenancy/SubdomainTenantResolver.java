@@ -1,5 +1,6 @@
 package com.comanda.platform.tenancy;
 
+import com.comanda.auth.TenantSubdomainPolicy;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +28,16 @@ public class SubdomainTenantResolver implements TenantResolver {
     }
 
     private Optional<String> extractSubdomain(String host) {
+        if (host == null) {
+            return Optional.empty();
+        }
+        host = host.trim().toLowerCase(java.util.Locale.ROOT);
         String suffix = "." + appDomain;
-        if (host == null || !host.endsWith(suffix)) {
+        if (!host.endsWith(suffix)) {
             return Optional.empty();
         }
         String subdomain = host.substring(0, host.length() - suffix.length());
-        if (subdomain.isBlank() || subdomain.contains(".")) {
+        if (subdomain.isBlank() || subdomain.contains(".") || TenantSubdomainPolicy.RESERVED.contains(subdomain)) {
             return Optional.empty();
         }
         return Optional.of(subdomain);

@@ -9,6 +9,8 @@ const rootDomains = (process.env.VITE_ROOT_DOMAINS || process.env.APP_DOMAIN || 
 if (rootDomains.length === 0) {
   throw new Error('VITE_ROOT_DOMAINS or APP_DOMAIN is required for a production build')
 }
+const tenantDomain = (process.env.VITE_TENANT_DOMAIN || process.env.APP_DOMAIN || rootDomains[0]).trim().toLowerCase()
+if (!tenantDomain) throw new Error('VITE_TENANT_DOMAIN or APP_DOMAIN is required for a production build')
 
 const assetsDirectory = resolve('../comanda-api/src/main/resources/static/assets')
 const javascriptAssets = (await readdir(assetsDirectory)).filter((name) => name.endsWith('.js'))
@@ -18,6 +20,9 @@ for (const domain of rootDomains) {
   if (!bundles.some((bundle) => bundle.includes(domain))) {
     throw new Error(`Built frontend does not contain configured root domain: ${domain}`)
   }
+}
+if (!bundles.some((bundle) => bundle.includes(tenantDomain))) {
+  throw new Error(`Built frontend does not contain configured tenant domain: ${tenantDomain}`)
 }
 
 console.log(`Verified frontend root domains: ${rootDomains.join(', ')}`)

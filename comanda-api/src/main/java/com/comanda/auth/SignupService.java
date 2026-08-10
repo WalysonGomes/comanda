@@ -24,16 +24,19 @@ public class SignupService {
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final RefreshTokenService refreshTokenService;
+    private final TenantSubdomainPolicy subdomainPolicy;
 
     public SignupService(
             TenantRepository tenantRepository,
             UserRepository userRepository,
             PasswordHasher passwordHasher,
-            RefreshTokenService refreshTokenService) {
+            RefreshTokenService refreshTokenService,
+            TenantSubdomainPolicy subdomainPolicy) {
         this.tenantRepository = tenantRepository;
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
         this.refreshTokenService = refreshTokenService;
+        this.subdomainPolicy = subdomainPolicy;
     }
 
     public record SignupCommand(
@@ -48,10 +51,7 @@ public class SignupService {
     @Transactional
     public RefreshTokenService.Session signup(SignupCommand command) {
         validate(command);
-        String subdomain = SubdomainNormalizer.normalize(command.subdomain());
-        if (subdomain.isBlank()) {
-            throw new IllegalArgumentException("Subdomínio inválido.");
-        }
+        String subdomain = subdomainPolicy.validateAndNormalize(command.subdomain());
         String email = command.email().trim().toLowerCase(Locale.ROOT);
 
         if (userRepository.existsByEmail(email)) {

@@ -9,12 +9,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const rootDomains = process.env.VITE_ROOT_DOMAINS || process.env.APP_DOMAIN || env.VITE_ROOT_DOMAINS || ''
-  if (mode === 'production' && !rootDomains.trim()) {
-    throw new Error('VITE_ROOT_DOMAINS or APP_DOMAIN is required for a production build')
+  const tenantDomain = process.env.VITE_TENANT_DOMAIN || env.VITE_TENANT_DOMAIN || process.env.APP_DOMAIN || rootDomains.split(',')[0] || ''
+  if (mode === 'production' && (!rootDomains.trim() || !tenantDomain.trim())) {
+    throw new Error('APP_DOMAIN/VITE_ROOT_DOMAINS and VITE_TENANT_DOMAIN (or APP_DOMAIN) are required for a production build')
   }
   return {
   define: {
     'import.meta.env.VITE_ROOT_DOMAINS': JSON.stringify(rootDomains),
+    'import.meta.env.VITE_TENANT_DOMAIN': JSON.stringify(tenantDomain.trim()),
     'import.meta.env.VITE_ROOT_HOST_ALIASES': JSON.stringify(process.env.VITE_ROOT_HOST_ALIASES || env.VITE_ROOT_HOST_ALIASES || ''),
   },
   plugins: [

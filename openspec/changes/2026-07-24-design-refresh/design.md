@@ -12,9 +12,11 @@ Há uma divergência explícita. `.design/Comanda Landing.dc.html` e `.design/Co
 
 ## Decisions
 
-### D1 — Um conjunto de tokens é autoritativo
+### D1 — A paleta aprovada é autoritativa
 
-Antes da implementação final, a equipe SHALL aprovar uma das duas paletas divergentes. A decisão permanece aberta nesta formalização; nenhuma fonte isolada é implicitamente promovida a definitiva. Depois da aprovação, o conjunto escolhido SHALL ser sincronizado atomicamente em `.design`, `comanda-client/src/index.css`, spec consolidada `design-system`, manifest PWA, tags runtime `theme-color` e ícones/assets de marca relevantes. Valores duplicados em estilos locais devem ser eliminados ou comprovadamente derivados da mesma fonte.
+A paleta aprovada é `--acc #b53c25`, `--acc-d #9c351f`, `--ink3 #7d7263`, `--acc-tint #fbe6df`, `--ink #2a2320`, `--ink2 #6f6557`, `--line #e8ddcc`, `--cream #f7f1e6`, `--card #fffdf9`, `--green #1f8a52` e `--green-tint #e2f0e4`. Ela SHALL ser sincronizada atomicamente em `comanda-client/src/index.css`, specs, manifest PWA, tags runtime `theme-color` e ícones/assets de marca relevantes. Valores duplicados em estilos locais devem ser eliminados ou comprovadamente derivados da mesma fonte.
+
+`.design` é somente uma referência visual local, não rastreada, e jamais deve ser commitida. Valores aprovados e assets derivados são transferidos para fontes versionadas pertencentes à aplicação. As fontes de verdade versionadas são os requisitos OpenSpec, tokens CSS, assets públicos de marca, metadados PWA, testes e screenshots/assets aceitos da aplicação. CI e builds limpos não podem depender da presença de `.design`.
 
 ### D2 — Host decide a superfície da rota `/`
 
@@ -22,7 +24,7 @@ No domínio raiz, `www`, `app`, `localhost` e endereços de desenvolvimento expl
 
 ### D3 — Comunicação limitada ao MVP comprovado
 
-Polling deve ser descrito como atualização periódica ou “quase em tempo real” com qualificação, nunca como tempo real. A landing não promete notificação automática. O fluxo só pode afirmar que o pedido foi registrado/chegou ao painel após persistência confirmada; se a criação falhar, deve apresentar erro/fallback coerente. O defeito atual de confiabilidade do checkout é bloqueador de release desta comunicação, embora sua correção pertença a outra change.
+Polling deve ser descrito como atualização periódica ou “quase em tempo real” com qualificação, nunca como tempo real. A landing não promete notificação automática. O fluxo só pode afirmar que o pedido foi registrado/chegou ao painel após persistência confirmada; se a criação falhar, deve apresentar erro/fallback coerente. O defeito atual de confiabilidade do checkout é bloqueador de release desta comunicação. Ele será corrigido diretamente após o design refresh, usando o PRD e as specs consolidadas como autoridade, sem uma nova change OpenSpec. `Dados do negócio` seguirá o mesmo processo direto; ambos permanecem fora do escopo de implementação da landing/design refresh.
 
 ### D4 — Assets aprovados e build reproduzível
 
@@ -41,15 +43,13 @@ Todos os CTAs devem usar destinos reais e semântica adequada; navegação por t
 
 ## Migration Plan
 
-1. Aprovar a paleta autoritativa e registrar a decisão nesta change.
-2. Reconciliar `.design`, specs e implementação; concluir landing e roteamento com testes.
+1. Registrar a paleta autoritativa aprovada nesta change.
+2. Transferir decisões aprovadas da referência local `.design` para specs/assets versionados; concluir landing e roteamento com testes.
 3. Corrigir copy/CTAs, acessibilidade e responsividade.
 4. Regenerar o build estático e executar a matriz completa de validação.
 5. Liberar somente após tratar o bloqueador de checkout ou remover toda comunicação contraditória.
 
 ## Open Questions
 
-- Qual paleta será autoritativa: a atual de `.design` (`#b53c25/#9c351f/#7d7263`) ou a consolidada (`#d6492f/#b53c25/#9a8f7e`)?
-- Quais hosts de produção, preview e desenvolvimento pertencem explicitamente ao domínio raiz, e o parâmetro `?storefront` deve existir fora de desenvolvimento?
+- Quais aliases adicionais de produção, preview e desenvolvimento deverão ser configurados em cada ambiente?
 - Quais screenshots e alegações da landing representam comportamento já verificado do MVP?
-- Qual change corrigirá o bloqueador de checkout antes da aprovação de release?

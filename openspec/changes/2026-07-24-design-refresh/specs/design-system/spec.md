@@ -1,7 +1,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Approved design tokens applied to the theme
-O frontend SHALL aplicar um único conjunto de tokens aprovado como tema via CSS variables/config do Tailwind. Antes da implementação final, a divergência entre `.design` (`--acc #b53c25`, `--acc-d #9c351f`, `--ink3 #7d7263`) e a baseline consolidada (`--acc #d6492f`, `--acc-d #b53c25`, `--ink3 #9a8f7e`) SHALL ser resolvida por decisão explícita. O conjunto escolhido SHALL ser sincronizado em `.design`, `index.css`, nesta spec consolidada quando a change for arquivada, manifest PWA, tags runtime `theme-color` e ícones/assets de marca relevantes. Os demais tokens permanecem `--acc-tint #fbe6df`, `--ink #2a2320`, `--ink2 #6f6557`, `--line #e8ddcc`, `--cream #f7f1e6` e `--card #fffdf9`, salvo decisão explícita nesta change. Schibsted Grotesk, Hanken Grotesk e JetBrains Mono SHALL manter seus papéis; somente modo claro.
+O frontend SHALL aplicar um único conjunto de tokens aprovado como tema via CSS variables/config do Tailwind: `--acc #b53c25`, `--acc-d #9c351f`, `--ink3 #7d7263`, `--acc-tint #fbe6df`, `--ink #2a2320`, `--ink2 #6f6557`, `--line #e8ddcc`, `--cream #f7f1e6`, `--card #fffdf9`, `--green #1f8a52` e `--green-tint #e2f0e4`. O conjunto SHALL ser sincronizado em `index.css`, nesta spec consolidada quando a change for arquivada, manifest PWA, tags runtime `theme-color` e ícones/assets de marca relevantes. `.design` SHALL permanecer uma referência local não rastreada; CI e builds limpos SHALL funcionar sem ela. Schibsted Grotesk, Hanken Grotesk e JetBrains Mono SHALL manter seus papéis; somente modo claro.
 
 #### Scenario: Tema expõe um conjunto autoritativo
 - **WHEN** um componente, manifest, tag de tema ou asset de marca referencia os tokens

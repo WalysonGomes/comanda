@@ -1,12 +1,22 @@
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const rootDomains = process.env.VITE_ROOT_DOMAINS || process.env.APP_DOMAIN || env.VITE_ROOT_DOMAINS || ''
+  if (mode === 'production' && !rootDomains.trim()) {
+    throw new Error('VITE_ROOT_DOMAINS or APP_DOMAIN is required for a production build')
+  }
+  return {
+  define: {
+    'import.meta.env.VITE_ROOT_DOMAINS': JSON.stringify(rootDomains),
+    'import.meta.env.VITE_ROOT_HOST_ALIASES': JSON.stringify(process.env.VITE_ROOT_HOST_ALIASES || env.VITE_ROOT_HOST_ALIASES || ''),
+  },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
@@ -44,4 +54,5 @@ export default defineConfig({
     outDir: '../comanda-api/src/main/resources/static',
     emptyOutDir: true,
   },
+  }
 })

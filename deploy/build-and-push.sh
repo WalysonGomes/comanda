@@ -15,12 +15,17 @@ set -euo pipefail
 GHCR_USER="${GHCR_USER:?defina GHCR_USER=<seu-usuario-github-em-minusculo>}"
 CADDYFILE="${CADDYFILE:-Caddyfile.sslip}"
 TAG="${TAG:-latest}"
+APP_DOMAIN="${APP_DOMAIN:?defina APP_DOMAIN=<dominio-raiz-da-aplicacao>}"
+VITE_ROOT_HOST_ALIASES="${VITE_ROOT_HOST_ALIASES:-}"
 
 APP_IMAGE="ghcr.io/${GHCR_USER}/comanda-app:${TAG}"
 CADDY_IMAGE="ghcr.io/${GHCR_USER}/comanda-caddy:${TAG}"
 
 echo "==> Buildando ${APP_IMAGE}"
-docker build -t "${APP_IMAGE}" -f Dockerfile .
+docker build \
+  --build-arg "APP_DOMAIN=${APP_DOMAIN}" \
+  --build-arg "VITE_ROOT_HOST_ALIASES=${VITE_ROOT_HOST_ALIASES}" \
+  -t "${APP_IMAGE}" -f Dockerfile .
 
 echo "==> Buildando ${CADDY_IMAGE} (CADDYFILE=${CADDYFILE})"
 docker build -t "${CADDY_IMAGE}" --build-arg "CADDYFILE=${CADDYFILE}" ./deploy/caddy

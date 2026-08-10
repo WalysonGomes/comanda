@@ -69,6 +69,24 @@ class SpaServingIntegrationTest {
     }
 
     @Test
+    void builtFrontendContainsTheConfiguredRootDomain() {
+        String configuredDomain = System.getenv("VITE_ROOT_DOMAINS");
+        if (configuredDomain == null || configuredDomain.isBlank()) {
+            configuredDomain = System.getenv("APP_DOMAIN");
+        }
+        assertThat(configuredDomain)
+            .as("APP_DOMAIN must be supplied to the integrated production build")
+            .isNotBlank();
+
+        String html = restTemplate.getForObject(baseUrl("/"), String.class);
+        Matcher matcher = Pattern.compile("/assets/index-[^\"]+\\.js").matcher(html);
+        assertThat(matcher.find()).isTrue();
+
+        String javascript = restTemplate.getForObject(baseUrl(matcher.group()), String.class);
+        assertThat(javascript).contains(configuredDomain.toLowerCase());
+    }
+
+    @Test
     void apiRouteIsNeverCapturedByTheSpaFallback() {
         try {
             restTemplate.getForEntity(baseUrl("/api/rota-inexistente"), String.class);

@@ -6,6 +6,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        APP_DOMAIN: ${APP_DOMAIN:?defina APP_DOMAIN para compilar o roteamento frontend}
+        VITE_ROOT_HOST_ALIASES: ${VITE_ROOT_HOST_ALIASES:-}
     env_file: .env
     volumes:
       - uploads:/var/comanda/uploads

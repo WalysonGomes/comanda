@@ -3,11 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=22.22.0 <23",
+    "yarn": "1.22.22"
+  },
   "scripts": {
+    "prebuild": "node scripts/require-node.mjs",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/verify-host-config.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
+    "pretest": "node scripts/require-node.mjs",
     "test": "vitest run"
   },
   "dependencies": {

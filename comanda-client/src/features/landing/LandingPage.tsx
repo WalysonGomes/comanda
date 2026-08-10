@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 
 import './landing.css'
@@ -23,6 +23,7 @@ function ComandaLogo({ size = 'md' }: { size?: string }) {
  */
 export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   /* ─── Smooth scroll ─── */
   const scrollTo = useCallback((id: string) => (e: React.MouseEvent) => {
@@ -91,24 +92,26 @@ export function LandingPage() {
       style={{ minHeight: '100vh', fontFamily: "'Hanken Grotesk',system-ui,sans-serif", color: '#2a2320', background: 'radial-gradient(140% 60% at 50% 0%,#f9f4ea 0%,#f2ead9 100%)' }}
     >
       {/* ── NAV ── */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(247,241,230,.86)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(232,221,204,.8)' }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto', padding: '0 24px', height: 66, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+      <header className="lp-header">
+        <nav aria-label="Navegação principal" className="lp-nav">
           <a href="#topo" onClick={goTop} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <ComandaLogo size="md" />
             <span style={{ font: "800 14px/1 'Schibsted Grotesk',sans-serif", letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--acc-d)' }}>Comanda</span>
           </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button className="lp-menu-button" type="button" aria-expanded={menuOpen} aria-controls="lp-nav-links" onClick={() => setMenuOpen((open) => !open)}>
+            <span className="lp-menu-label">Menu</span>
+          </button>
+          <div id="lp-nav-links" className={`lp-nav-links${menuOpen ? ' is-open' : ''}`}>
             <a href="#como-funciona" onClick={scrollTo('como-funciona')} style={{ padding: '9px 13px', borderRadius: 10, font: "600 14px/1 'Hanken Grotesk',sans-serif", color: 'var(--ink2)' }}>Como funciona</a>
             <a href="#recursos" onClick={scrollTo('recursos')} style={{ padding: '9px 13px', borderRadius: 10, font: "600 14px/1 'Hanken Grotesk',sans-serif", color: 'var(--ink2)' }}>Recursos</a>
             <a href="#planos" onClick={scrollTo('planos')} style={{ padding: '9px 13px', borderRadius: 10, font: "600 14px/1 'Hanken Grotesk',sans-serif", color: 'var(--ink2)' }}>Planos</a>
-            <Link to="/onboarding">
-              <button style={{ marginLeft: 8, border: 'none', cursor: 'pointer', padding: '11px 18px', borderRadius: 12, background: 'var(--acc)', color: '#fff', font: "800 14px/1 'Hanken Grotesk',sans-serif", boxShadow: '0 10px 20px -10px var(--acc)' }}>
-                Criar meu cardápio
-              </button>
-            </Link>
+            <Link to="/login" className="lp-login-link">Entrar</Link>
+            <Link to="/onboarding" className="lp-primary-link">Criar meu cardápio</Link>
           </div>
-        </div>
-      </div>
+        </nav>
+      </header>
+
+      <main>
 
       {/* ── HERO ── */}
       <div id="topo" style={{ maxWidth: 1120, margin: '0 auto', padding: 'clamp(48px,7vw,88px) 24px clamp(40px,6vw,72px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'clamp(32px,5vw,64px)', overflowX: 'clip' }}>
@@ -121,7 +124,7 @@ export function LandingPage() {
             Seu cardápio no ar. Seus pedidos <span style={{ color: 'var(--acc)' }}>organizados</span>.
           </h1>
           <p style={{ margin: '18px 0 0', fontSize: 'clamp(16px,1.6vw,18.5px)', lineHeight: 1.55, color: 'var(--ink2)', maxWidth: 460, textWrap: 'pretty' as never }}>
-            O pedido continua chegando no seu WhatsApp — só que pronto, formatado e sem se perder no meio da conversa. Cardápio digital com link próprio e um painel simples de acompanhar.
+            O cliente organiza o pedido pelo cardápio e segue para o envio pelo WhatsApp, com itens, endereço e total formatados. Você também conta com um painel simples de acompanhar.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginTop: 28 }}>
             <Link to="/onboarding">
@@ -164,7 +167,7 @@ export function LandingPage() {
                 <div style={{ alignSelf: 'flex-start', maxWidth: '85%', background: '#f1e9da', borderRadius: '4px 14px 14px 14px', padding: '10px 13px' }}>alô?? viu meu pedido?</div>
               </div>
               <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed var(--line)', font: "600 13px/1.45 'Hanken Grotesk',sans-serif", color: '#a05a4c' }}>
-                Endereço não veio. Preço foi calculated de cabeça. E no pico, mensagem some.
+                Endereço não veio. Preço foi calculado de cabeça. E no pico, mensagem some.
               </div>
             </div>
             {/* Depois */}
@@ -233,7 +236,7 @@ export function LandingPage() {
               Cada pedido vira um cartão com status, tempo e total. Aceite, prepare e marque como entregue com um toque.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginTop: 20 }}>
-              {['Filtro por status: novos, em preparo, prontos', 'Notificação de pedido novo em tempo real', 'Resumo do dia: faturamento e pedidos de um olhar'].map((t) => (
+              {['Filtro por status: novos, em preparo, prontos', 'Lista atualizada automaticamente a cada poucos segundos', 'Resumo do dia: faturamento e pedidos de um olhar'].map((t) => (
                 <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 10, font: "600 15px/1.4 'Hanken Grotesk',sans-serif", color: 'var(--ink)' }}>
                   <span style={{ width: 22, height: 22, flex: 'none', borderRadius: '50%', background: 'var(--green-tint)', color: 'var(--green)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Check13 />
@@ -276,7 +279,7 @@ export function LandingPage() {
           {[
             { title: 'Cliente não baixa nada', desc: 'O cardápio abre direto no navegador, pelo link.' },
             { title: 'Instala como app', desc: 'O painel vira um ícone na tela do seu celular.' },
-            { title: 'Nada falha em silêncio', desc: 'Se algo der errado, a tela avisa — pedido não some.' },
+            { title: 'Acompanhamento claro', desc: 'Pedidos confirmados ficam organizados por status no painel.' },
             { title: 'Seus dados, protegidos', desc: 'Política de privacidade clara, de acordo com a LGPD.' },
           ].map((i) => (
             <div key={i.title} style={{ padding: '6px 4px' }}>
@@ -374,8 +377,10 @@ export function LandingPage() {
         </div>
       </div>
 
+      </main>
+
       {/* ── FOOTER ── */}
-      <div style={{ borderTop: '1px solid var(--line)' }}>
+      <footer style={{ borderTop: '1px solid var(--line)' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 24px 36px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 18 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
             <ComandaLogo size="xs" />
@@ -385,10 +390,10 @@ export function LandingPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 20px', font: "600 13.5px/1 'Hanken Grotesk',sans-serif" }}>
             <Link to="/privacidade" style={{ color: 'var(--ink2)', textDecoration: 'none' }}>Política de privacidade</Link>
             <Link to="/termos" style={{ color: 'var(--ink2)', textDecoration: 'none' }}>Termos de serviço</Link>
-            <a href="mailto:contato@comanda.local" style={{ color: 'var(--ink2)', textDecoration: 'none' }}>Fale com a gente</a>
+            <Link to="/login" style={{ color: 'var(--ink2)', textDecoration: 'none' }}>Entrar</Link>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   )
 }

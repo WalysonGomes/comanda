@@ -7,7 +7,7 @@ import { useAuth } from '@/features/auth/auth-context'
 
 /**
  * Bloco LOGIN de `.design/Comanda Painel.dc.html` (linhas 69-107): avatar, boas-vindas, e-mail,
- * senha, erro genérico, "Esqueceu a senha?" inerte (fora do MVP), atalho para cadastro.
+ * senha, erro genérico e atalho para cadastro. Recuperação de senha permanece fora do MVP.
  */
 export function LoginPage() {
   const { login } = useAuth()
@@ -42,7 +42,7 @@ export function LoginPage() {
             Bem-vindo de volta
           </h1>
           <p className="mt-2.5 max-w-[280px] text-[14.5px] leading-snug text-ink-2">
-            Entre para acompanhar seus pedidos em tempo real.
+            Entre para acompanhar seus pedidos, com atualizações automáticas a cada poucos segundos.
           </p>
         </div>
 
@@ -98,7 +98,6 @@ export function LoginPage() {
         >
           {submitting ? 'Entrando...' : 'Entrar'}
         </Button>
-        <div className="mt-4 text-center text-[13.5px] text-ink-3">Esqueceu a senha?</div>
       </form>
 
       <div className="border-t border-line py-5 text-center">

@@ -42,6 +42,9 @@ public class Tenant {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+
     @Column(name = "whatsapp_number", length = 20)
     private String whatsappNumber;
 
@@ -90,6 +93,19 @@ public class Tenant {
     public String getWhatsappNumber() {
         return whatsappNumber;
     }
+
+    public String getLogoUrl() { return logoUrl; }
+
+    public void updateBusinessSettings(String name, String whatsappNumber, BigDecimal deliveryFee,
+            BigDecimal minOrderValue, String subdomain) {
+        this.name = name;
+        this.whatsappNumber = whatsappNumber;
+        this.deliveryFee = deliveryFee;
+        this.minOrderValue = minOrderValue;
+        this.subdomain = subdomain;
+    }
+
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
 
     public BigDecimal getDeliveryFee() {
         return deliveryFee;

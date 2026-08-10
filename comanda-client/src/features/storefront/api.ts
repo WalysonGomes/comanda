@@ -99,11 +99,9 @@ export type ValidateCartResult = {
 }
 
 /**
- * Contract declared by this change, implemented by `order-operation` (proposal.md Decision 7):
- * public, idempotent order creation. `POST /api/loja/pedidos` doesn't exist yet in this change's
- * backend — calling it is expected to fail until `order-operation` ships; the storefront's own
- * requirement (confirm "Pedido enviado" + always offer the WhatsApp copy fallback) doesn't depend
- * on it succeeding, so callers treat failures as non-blocking (see `CheckoutScreen.finalize`).
+ * Public, idempotent order creation implemented by `order-operation`.
+ * Checkout treats success from this endpoint as the persistence confirmation required before the
+ * Sent/WhatsApp handoff. Ambiguous failures are retryable with the same idempotency key.
  */
 export type CreateOrderPayload = {
   idempotencyKey: string

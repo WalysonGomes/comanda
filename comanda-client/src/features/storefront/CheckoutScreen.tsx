@@ -8,6 +8,9 @@ import { lineTotal, useCartStore } from '@/features/storefront/cart'
 import { useValidateCart } from '@/features/storefront/queries'
 import { buildOrderMessage, buildWhatsAppUrl } from '@/features/storefront/whatsapp'
 
+const ORDER_CREATE_FAILURE_MESSAGE =
+  'Não conseguimos confirmar o pedido no sistema. Confira sua conexão e tente novamente; seus dados foram mantidos.'
+
 /** Checkout (block CHECKOUT): single screen, address only for Entrega, inline validation, and a
  * pre-handoff availability re-check against the server (tasks 10.1-10.4). */
 export function CheckoutScreen({
@@ -30,9 +33,11 @@ export function CheckoutScreen({
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [unavailable, setUnavailable] = useState<{ lineId: string; name: string }[]>([])
+  const [orderError, setOrderError] = useState<string | null>(null)
   // Set only for PLAN_LIMIT_REACHED (task 9.2): this store hit its own monthly order cap, so the
-  // pedido genuinely wasn't taken — unlike other create-order failures, this one blocks the
-  // WhatsApp handoff instead of silently proceeding (see the comment on the createOrder call).
+  // pedido genuinely wasn't taken. Other create-order failures also block the WhatsApp handoff now,
+  // but remain retryable with the same idempotency key because persistence may have succeeded after
+  // a network timeout even when this browser did not receive the response.
   const [planLimitReached, setPlanLimitReached] = useState(false)
   // Stable for the lifetime of this checkout attempt (CheckoutScreen unmounts on back-to-cart or
   // after a new order via SentScreen), so a double-tap before `submitting` re-renders — or any
@@ -70,6 +75,7 @@ export function CheckoutScreen({
 
     submittingRef.current = true
     setSubmitting(true)
+    setOrderError(null)
     try {
       const payload = {
         lines: lines.map((line) => ({
@@ -82,20 +88,17 @@ export function CheckoutScreen({
       }
       const result = await validateCart.mutateAsync(payload)
       if (!result.valid) {
+        setOrderError(null)
         const invalidIds = new Set(result.lines.filter((l) => !l.available).map((l) => l.lineId))
         setUnavailable(lines.filter((line) => invalidIds.has(line.lineId)).map((line) => ({ lineId: line.lineId, name: line.name })))
         return
       }
       setUnavailable([])
 
-      const message = buildOrderMessage({ lines, deliveryType, address, deliveryFee: deliveryFeeValue })
-
-      // The idempotent order-creation endpoint is a contract declared here and implemented by
-      // `order-operation` (proposal.md Decision 7). The storefront's own requirement is otherwise
-      // unconditional: confirm "Pedido enviado" before the WhatsApp handoff and always offer the
-      // copy fallback, regardless of whether persistence succeeds — except PLAN_LIMIT_REACHED
-      // (task 9.2), the one failure that means the pedido genuinely wasn't taken because the
-      // store hit its own plan cap; that one has to stop the customer here, not paper over it.
+      // The sent/WhatsApp handoff is only safe after the backend confirms idempotent persistence.
+      // If this call fails ambiguously (network/timeout/5xx), the customer stays on checkout and
+      // retries with the same idempotency key so the server can return the already-created order
+      // instead of creating a duplicate.
       try {
         await storefrontApi.createOrder({
           idempotencyKey,
@@ -111,9 +114,11 @@ export function CheckoutScreen({
           setPlanLimitReached(true)
           return
         }
-        // Any other failure: ignored, see comment above.
+        setOrderError(ORDER_CREATE_FAILURE_MESSAGE)
+        return
       }
 
+      const message = buildOrderMessage({ lines, deliveryType, address, deliveryFee: deliveryFeeValue })
       const whatsappUrl = business.whatsappNumber ? buildWhatsAppUrl(business.whatsappNumber, message) : null
       onSent(message, whatsappUrl)
     } finally {
@@ -131,6 +136,8 @@ export function CheckoutScreen({
         ? 'Pedidos indisponíveis no momento'
         : submitting
           ? 'Enviando…'
+          : orderError
+            ? 'Tentar novamente'
           : 'Enviar pedido'
 
   return (
@@ -157,6 +164,27 @@ export function CheckoutScreen({
             <p className="my-1.5 text-[12.5px] leading-snug text-[#9a5a4c]">
               Esta loja atingiu o limite de pedidos deste mês. Entre em contato diretamente pelo WhatsApp da loja.
             </p>
+          </div>
+        )}
+        {orderError && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mb-4 rounded-[14px] border border-[rgba(160,90,76,.3)] bg-[#f0e1dc] p-3.5"
+          >
+            <div className="flex items-center gap-2 text-[13.5px] font-bold text-[#8a4a3d]">
+              <AlertTriangle className="size-[18px]" />
+              Pedido ainda não confirmado
+            </div>
+            <p className="my-1.5 text-[12.5px] leading-snug text-[#9a5a4c]">{orderError}</p>
+            <button
+              type="button"
+              onClick={finalize}
+              disabled={submitting}
+              className="w-full rounded-[11px] border border-[#c98a7c] bg-white py-2.5 text-[13.5px] font-bold text-[#8a4a3d] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Tentar novamente
+            </button>
           </div>
         )}
         {unavailable.map((item) => (

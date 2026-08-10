@@ -124,16 +124,29 @@ Antes de confirmar o envio, o sistema SHALL validar no servidor, contra o tenant
 - **WHEN** todos os itens do carrinho continuam disponíveis na validação
 - **THEN** o sistema permite prosseguir para a confirmação de envio com os preços atuais do servidor
 
-### Requirement: Confirmação de envio antes do handoff ao WhatsApp
-O sistema SHALL exibir uma confirmação explícita de "Pedido enviado" ao cliente ANTES de abrir o WhatsApp do negócio. O handoff SHALL abrir o WhatsApp do número do negócio com a mensagem pré-formatada no formato exato definido na Seção 3.1 do PRD. Emojis SHALL ser usados apenas nessa mensagem de WhatsApp, nunca na interface.
+### Requirement: Confirmação de persistência antes do handoff ao WhatsApp
+O sistema SHALL exibir confirmação de envio/sucesso somente após o servidor confirmar a persistência idempotente do pedido. O handoff para WhatsApp SHALL acontecer apenas depois dessa confirmação de persistência, como fallback pós-registro para comunicação com o negócio, nunca como substituto para gravar o pedido. Falhas de rede, timeout, HTTP 5xx ou erro inesperado da API SHALL manter o cliente no checkout com erro claro, acessível e recuperável, preservando formulário e carrinho. Retry explícito SHALL reenviar a mesma `idempotency_key` da tentativa ambígua para não duplicar pedidos. Emojis SHALL ser usados apenas na mensagem de WhatsApp, nunca na interface.
 
-#### Scenario: Confirmação precede o WhatsApp
+#### Scenario: Confirmação precede o WhatsApp após persistência
 - **WHEN** o cliente finaliza um pedido válido
-- **THEN** o sistema mostra a confirmação "Pedido enviado" antes de qualquer tentativa de abrir o WhatsApp
+- **THEN** o sistema envia o pedido para criação idempotente no servidor
+- **AND** mostra a confirmação somente depois da resposta de sucesso
+- **AND** só então disponibiliza ou tenta abrir o WhatsApp
 
 #### Scenario: Mensagem no formato do PRD
 - **WHEN** o handoff para o WhatsApp é acionado
 - **THEN** a mensagem gerada segue o formato exato da Seção 3.1 (itens com quantidade, adicionais, tipo/endereço de entrega, total com taxa e observação), com emojis apenas nessa mensagem
+
+#### Scenario: Falha de criação mantém checkout recuperável
+- **WHEN** a criação do pedido falha por rede, timeout, HTTP 5xx ou erro inesperado da API
+- **THEN** o sistema permanece no checkout e não disponibiliza o handoff ao WhatsApp
+- **AND** exibe erro acessível com ação explícita de retry
+- **AND** preserva dados do formulário e carrinho
+
+#### Scenario: Retry usa a mesma chave idempotente
+- **WHEN** o cliente tenta novamente após uma falha ambígua de criação
+- **THEN** o storefront reenvia a mesma `idempotency_key` da tentativa anterior
+- **AND** o backend pode retornar o pedido já persistido sem criar duplicata
 
 ### Requirement: Fallback de cópia da mensagem
 O sistema SHALL tratar o fallback de mensagem como tela de primeira classe: a mensagem formatada do pedido SHALL estar sempre visível na tela de envio, com um botão "Copiar mensagem", de modo que, se o WhatsApp não abrir, o cliente possa copiar a mensagem e colá-la manualmente na conversa do negócio.

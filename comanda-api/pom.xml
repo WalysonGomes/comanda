@@ -135,6 +135,14 @@
 	</dependencyManagement>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>${project.build.directory}/generated-resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -150,10 +158,10 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<!-- Deploy 1.1: builds the Vite SPA and writes it straight into
-					src/main/resources/static (comanda-client/vite.config.ts outDir) before
-					process-resources copies resources into the jar, so `mvn package` alone
-					produces the single deployable artifact (PRD 7.3). -->
+				<!-- Builds the Vite SPA under target/generated-resources before
+					process-resources copies it into the jar. Generated frontend files never
+					become versioned source, while `mvn package` still produces the single
+					deployable artifact required by PRD 7.3. -->
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.15.1</version>

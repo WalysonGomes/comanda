@@ -51,9 +51,10 @@ export default defineConfig(({ mode }) => {
     },
   },
   build: {
-    // Backend serve a SPA como artefato unico (PRD 7.2/7.3): o build cai direto nos
-    // static resources do Spring Boot.
-    outDir: '../comanda-api/src/main/resources/static',
+    // Backend serve a SPA como artefato unico (PRD 7.2/7.3), but generated files stay under
+    // Maven's target directory instead of being committed as source. The resources phase copies
+    // this directory into the executable JAR.
+    outDir: '../comanda-api/target/generated-resources/static',
     emptyOutDir: true,
   },
   }

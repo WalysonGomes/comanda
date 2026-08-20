@@ -1,6 +1,5 @@
-# deploy-vps 1.1/1.3/8.1: single build, single artifact. Build context is the repo root so
-# comanda-api's pom.xml can reach comanda-client as a sibling directory (frontend-maven-plugin
-# `${frontend.dir}`) and produce one JAR with the SPA embedded.
+# Build from the repository root so Maven can compile the frontend sibling project and
+# package the generated SPA into the Spring Boot JAR.
 FROM maven:3.9-eclipse-temurin-21 AS build
 ARG APP_DOMAIN
 ARG VITE_TENANT_DOMAIN

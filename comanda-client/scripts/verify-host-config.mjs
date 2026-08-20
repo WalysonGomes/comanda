@@ -12,7 +12,7 @@ if (rootDomains.length === 0) {
 const tenantDomain = (process.env.VITE_TENANT_DOMAIN || process.env.APP_DOMAIN || rootDomains[0]).trim().toLowerCase()
 if (!tenantDomain) throw new Error('VITE_TENANT_DOMAIN or APP_DOMAIN is required for a production build')
 
-const assetsDirectory = resolve('../comanda-api/src/main/resources/static/assets')
+const assetsDirectory = resolve('../comanda-api/target/generated-resources/static/assets')
 const javascriptAssets = (await readdir(assetsDirectory)).filter((name) => name.endsWith('.js'))
 const bundles = await Promise.all(javascriptAssets.map((name) => readFile(resolve(assetsDirectory, name), 'utf8')))
 
